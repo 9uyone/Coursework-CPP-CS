@@ -2,8 +2,12 @@
 
 std::istream& operator>>(std::istream& is, Vertex& vtx) {
 	_Vertex_t value;
+
 	for (uint8_t i(0); i < 2; ++i) {
 		while (true) {
+			if (is.eof())
+				throw std::out_of_range("Vertex input end of stream");
+
 			while (is.peek() == ' ' or is.peek() == '\n') is.ignore();
 			is >> value;
 			if (is.fail()) {

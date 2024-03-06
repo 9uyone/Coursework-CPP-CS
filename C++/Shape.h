@@ -1,29 +1,40 @@
 #pragma once
 #include "Vertex.h"
 #include <vector>
-#include <array>
+#include <stdexcept>
+#include <iterator>
+#include <algorithm>
 
-#if __cplusplus < 202002L
-template<uint8_t _Vertex_count, typename = std::enable_if_t<std::greater<>()(_Vertex_count, 0)>>
-#else
-template<uint8_t _Vertex_count>
-requires (_Vertex_count > 0)
-#endif
 class Shape {
+private:
+	size_t vertex_count_;
+
 protected:
-	std::vector<Vertex> vertices_ {_Vertex_count};
+	std::vector<Vertex> vertices{};
 
 public:
-	Shape() : vertices_{} {  }
+	template<typename InIt = std::istream_iterator<Vertex>>
+	Shape(size_t vertex_count, InIt it_begin = InIt(std::cin)) {
+		if (vertex_count < 2)
+			throw std::domain_error("Count of vertex must be >= 2");
+		
+		this->vertex_count_ = vertex_count_;
+		//vertices.resize(vertex_count);
+		//std::copy_n(it_begin, vertex_count, vertices.begin());
+		vertices.reserve(vertex_count);
+		std::copy_n(it_begin, vertex_count, std::back_inserter(vertices));
+	}
+	Shape() {}
 
-	virtual void move(_Vertex_t deltaX, _Vertex_t deltaY) = 0;
+	//virtual void move(_Vertex_t deltaX, _Vertex_t deltaY) = 0;
 
 	// додати видалити вершину
-	template<typename T> void add_vertex(T&& vx) { vertices_.emplace_back(vx); }
+	//template<typename T> void add_vertex(T&& vx) { vertices.push_back(vx); }
+	template<typename T> void add_vertex(T&& vx) { vertices.push_back(std::forward<T>(vx)); }
 
 protected:
-	auto* begin() { return vertices_.begin(); }
-	auto* end() { return vertices_.end(); }
+	std::vector<Vertex>::iterator begin() { return vertices.begin(); }
+	std::vector<Vertex>::iterator end() { return vertices.end(); }
 
 public:
 	virtual ~Shape() {}

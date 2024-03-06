@@ -1,8 +1,8 @@
 #pragma once
 #include "Shape.h"
-class Rectangle : public Shape<4> {
+class Rectangle : public Shape {
 public:
-	Rectangle() {}
+	//Rectangle() : Shape(4) {}
 	virtual ~Rectangle() {}
 
 public:

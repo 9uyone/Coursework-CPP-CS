@@ -3,7 +3,7 @@
 #include <functional>
 #include <stdexcept>
 
-using _Vertex_t = double;
+using _Vertex_t = int;
 
 class Vertex {
 private:
@@ -11,15 +11,22 @@ private:
 
 public: // ctors & dtor
 	Vertex(_Vertex_t x = 0, _Vertex_t y = 0) :
-		x_(x), y_(y) {}
+		x_(x), y_(y) {
+		//std::cout << "Default ctor\n";
+	}
 
 	Vertex(const Vertex& other) :
-		x_(other.x_), y_(other.y_) {}
+		x_(other.x_), y_(other.y_) {
+		//std::cout << "Copy ctor\n";
+	}
 
 	Vertex(Vertex&& other) noexcept :
 		x_(std::move(other.x_)),
 		y_(std::move(other.y_))
-	{ other.x_ = other.y_ = 0; }
+	{
+		other.x_ = other.y_ = 0;
+		//std::cout << "Move ctor\n";
+	}
 	
 	virtual ~Vertex() {}
 
@@ -49,7 +56,8 @@ public: // math ops
 		x_ /= y_ /= scalar;
 	}
 
-	const _Vertex_t operator=(_Vertex_t value) { x_ = y_ = value; }
+	void operator=(_Vertex_t value) { x_ = y_ = value; }
+	Vertex& operator=(const Vertex& other) { this->x_ = other.x_; this->y_ = other.y_; return *this; }
 
 
 public:
