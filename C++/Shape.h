@@ -3,20 +3,22 @@
 #include <vector>
 #include <stdexcept>
 #include <iterator>
+#include <nlohmann/json.hpp>
 
 class Shape {
 protected:
 	std::vector<Vertex> vertices{};
+public:
+	std::string name;
 
 // ctors
 public:
-	Shape() = default;
+	//Shape() = default;
 
 	template<typename InIt = std::istream_iterator<Vertex>>
 	Shape(size_t vertex_count, InIt it_begin = InIt(std::cin)) {
 		if (vertex_count < 2)
 			throw std::domain_error("Count of vertex must be >= 2");
-		
 		//vertices.resize(vertex_count);
 		//std::copy_n(it_begin, vertex_count, vertices.begin());
 		vertices.reserve(vertex_count);
@@ -34,6 +36,14 @@ public:
 	// додати видалити вершину
 	void add_vertex(_Vertex_t x, _Vertex_t y) { vertices.emplace_back(x, y); }
 	template<typename T> void add_vertex(T&& vx) { vertices.push_back(std::forward<T>(vx)); }
+
+	virtual void showInfo(std::ostream& os = std::cout) = 0;
+	friend std::ostream& operator<< (std::ostream& os, Shape& shp) {
+		shp.showInfo(os);
+		return os;
+	}
+
+	//virtual void saveJson() = 0;
 
 	Vertex& operator[](size_t index) { return vertices.at(index); }
 

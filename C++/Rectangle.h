@@ -4,7 +4,10 @@ class Rectangle : public Shape {
 public:
 	//template<typename Vtx1, Vtx2>
 	Rectangle(Vertex v1, Vertex v2) :
-		Shape({ v1, {v1.get_x(), v2.get_y()}, v2, {v2.get_x(), v1.get_y()}})
+		Shape({v1,
+			  {v1.get_x(), v2.get_y()},
+			  v2,
+			  {v2.get_x(), v1.get_y()}})
 	{}
 	virtual ~Rectangle() {}
 
@@ -16,18 +19,16 @@ public:
 	}
 
 	double square() override {
-		return pow(std::fabs(vertices[1].get_x() - vertices[0].get_x()), 2) +
-			pow(std::fabs(vertices[1].get_y() - vertices[0].get_y()), 2);;
+		return std::fabs((vertices[2] - vertices[0]).get_x()) *
+			std::fabs((vertices[2] - vertices[0]).get_y());
 	}
 
 public:
 	// iostream operators
-	friend std::ostream& operator<<(std::ostream& os, Rectangle& obj) {
-		os << "RECTANGLE" << std::endl << "Coordinates:" << std::endl;
-		for (Vertex& vtx : obj)
+	void showInfo(std::ostream& os = std::cout) override {
+		os << "RECTANGLE" << name << std::endl << "Coordinates:" << std::endl;
+		for (Vertex& vtx : *this)
 			os << "\x1b[4G" << vtx << std::endl;
-		os << "Square: " << obj.square() << std::endl;
-
-		return os;
+		os << "Square: " << this->square() << std::endl;
 	}
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include "menuMethods.cpp"
+#include "menuMethods.h"
 #include <unordered_map>
 #include <string>
 #include <limits>
@@ -15,17 +15,23 @@ const char _Menu_back = '-';
 const char _Menu_exit = '0';
 const uint16_t _Menu_right_border = 33;
 
-using _Menu_f1_ptr = void(*)();
-using _Menu_f2_ptr = std::shared_ptr<Shape>(*)();
-using _Menu_func = std::variant<_Menu_f1_ptr, _Menu_f2_ptr>;
+using _Menu_shape_cont = std::vector<std::shared_ptr<Shape>>;
+using _Menu_func = std::variant<void(*)(), std::shared_ptr<Shape>(*)(), void(*)(_Menu_shape_cont&)>;
 
 struct MenuItem {
 	std::string desc;
 	_Menu_func action;
+	static enum acts {
+		VOID,
+		RETURNS,
+		PARAMETER
+	};
+	acts actionType;
 	
-	MenuItem(std::string& d, _Menu_func& f) {
+	MenuItem(std::string& d, _Menu_func& f, acts actionType) {
 		this->desc = d;
 		this->action = std::move(f);
+		this->actionType = actionType;
 	}
 	MenuItem() = default;
 };
@@ -41,12 +47,13 @@ private:
 public:
 	std::string desc;
 
-	Menu(std::string desc = "Main menu") : desc(desc) {}
+	Menu(std::string& desc) : desc(desc) {}
+	Menu(std::string&& desc = "Main menu") : desc(std::move(desc)) {}
 
 	static void showMenu(Menu* menu) {
 		//system("cls");
 		current = menu;
-		std::cout << CSI"93m" << CSI << _Menu_right_border/2 - menu->desc.size()/2 + 1 << "G" <<
+		std::cout << CSI"91m" << CSI << _Menu_right_border/2 - menu->desc.size()/2 + 1 << "G" <<
 			menu->desc <<
 			CSI"0m" << std::endl;
 
@@ -64,19 +71,22 @@ public:
 		print_border(true);
 	}
 
-	void add(char key, std::string desc, _Menu_func func) {
-		if (key == _Menu_exit or key == _Menu_back or submenus.contains(key) or !items.try_emplace(key, desc, func).second)
-			throw std::exception(std::format("{} char for menu item already used", key).c_str());
+	void add(char key, std::string desc, _Menu_func func, MenuItem::acts actionType) {
+		if (key == _Menu_exit or key == _Menu_back or
+			submenus.contains(key) or
+			!items.try_emplace(key, desc, func, actionType).second)
+				throw std::exception(std::format("{} char for menu item already used", key).c_str());
 	}
 
 	void add(char key, Menu& menu) {
 		if (key == _Menu_exit or key == _Menu_back or items.contains(key))
 			throw std::exception(std::format("{} char for menu item already used", key).c_str());
 		menu.parent = this;
-		submenus[key] = menu;
+		submenus[key] = std::move(menu);
 	}
 
-	void cin_loop(std::vector<std::shared_ptr<Shape>>* shapes = nullptr) {
+	//only accepts containers with std::shared_ptr<Shape> as template typename
+	void cin_loop(_Menu_shape_cont& cont) {
 		while (1) {
 			std::cout << std::endl << "Select item: " << CSI"93m";
 			while (std::cin.peek() == '\n')	std::cin.ignore();
@@ -91,12 +101,22 @@ public:
 
 			else if (current->items.contains(ch)) {
 				std::cout << CSI"92m" << current->items[ch].desc << CSI"0m" << std::endl;
-				if (shapes != nullptr) {
-					if (const auto* f_ptr = std::get_if<1>(&current->items[ch].action)) {
-						shapes->push_back((*f_ptr)());
-					}
+				/*if (const auto* f_ptr = std::get_if<1>(&current->items[ch].action))
+					cont.push_back((*f_ptr)());
+				else std::get<void(*)()>(current->items[ch].action)();*/
+				auto& act = current->items[ch].action;
+				switch (current->items[ch].actionType) {
+					case MenuItem::acts::VOID:
+						std::get<0>(act)();
+						break;
+					case MenuItem::acts::RETURNS:
+						cont.push_back((*std::get<1>(act))());
+						break;
+					case MenuItem::acts::PARAMETER:
+						(*std::get<2>(act))(cont);
+						break;
 				}
-				else std::get<void(*)()>(current->items[ch].action)();
+
 			}
 			else if (current->submenus.contains(ch))
 				showMenu(&current->submenus.find(ch)->second);

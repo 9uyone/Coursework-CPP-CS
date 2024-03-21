@@ -3,7 +3,7 @@
 class Square : public Shape {
 //ctors & dtor
 public:
-	Square() : Shape() {}
+	//Square() : Shape() {}
 
 	// by left bottom point and side length
 	//template<typename InIt = std::istream_iterator<Vertex>> Square(InIt it = InIt(std::cin)) :
@@ -19,7 +19,11 @@ public:
 		Shape({ { vtx.get_x(), vtx.get_y() },
 			  { vtx.get_x(), vtx.get_y() + side },
 			  { vtx.get_x() + side, vtx.get_y() + side },
-			  { vtx.get_x() + side, vtx.get_y() } }) {}
+			  { vtx.get_x() + side, vtx.get_y() } })
+	{
+		if (side <= 0)
+			throw std::invalid_argument("Side length should be > 0");
+	}
 
 	virtual ~Square() {}
 
@@ -32,19 +36,16 @@ public:
 	}
 
 	double square() override {
-		return pow(std::fabs(vertices[1].get_x() - vertices[0].get_x()), 2) +
-			pow(std::fabs(vertices[1].get_y() - vertices[0].get_y()), 2);
+		return pow(std::fabs((vertices[1] - vertices[0]).get_y()), 2);
 	}
 
 public:
 // iostream operators
-	friend std::ostream& operator<<(std::ostream& os, Square& obj) {
-		os << "SQUARE" << std::endl << "Coordinates:" << std::endl;
-		for (Vertex& vtx : obj)
+	void showInfo(std::ostream& os = std::cout) override {
+		os << "SQUARE " << name << std::endl << "Coordinates:" << std::endl;
+		for (Vertex& vtx : *this)
 			os << "\x1b[4G" << vtx << std::endl;
-		os << "Square: " << obj.square() << std::endl;
-
-		return os;
+		os << "Square: " << this->square() << std::endl;
 	}
 
 	friend std::istream& operator>>(std::istream& is, Square& obj) {

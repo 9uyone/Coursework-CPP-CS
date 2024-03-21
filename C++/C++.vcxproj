@@ -140,6 +140,7 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="menuMethods.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Vertex.h" />
