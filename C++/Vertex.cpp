@@ -23,21 +23,21 @@ std::istream& operator>>(std::istream& is, Vertex& vtx) {
 }
 
 // math ops
-Vertex Vertex::operator+(_Vertex_t scalar) {
-	return Vertex(x_ + scalar, y_ + scalar);
-}
-
-Vertex Vertex::operator-(_Vertex_t scalar) {
-	return Vertex(x_ - scalar, y_ - scalar);
-}
-
-Vertex Vertex::operator*(_Vertex_t scalar) {
-	return Vertex(x_ * scalar, y_ * scalar);
-}
-
-Vertex Vertex::operator/(_Vertex_t scalar) {
-	if (scalar == 0.0)
-		throw std::invalid_argument("Vertex division by zero");
-	return Vertex(x_ / scalar, y_ / scalar);
-}
+//Vertex Vertex::operator+(_Vertex_t scalar) {
+//	return Vertex(x_ + scalar, y_ + scalar);
+//}
+//
+//Vertex Vertex::operator-(_Vertex_t scalar) {
+//	return Vertex(x_ - scalar, y_ - scalar);
+//}
+//
+//Vertex Vertex::operator*(_Vertex_t scalar) {
+//	return Vertex(x_ * scalar, y_ * scalar);
+//}
+//
+//Vertex Vertex::operator/(_Vertex_t scalar) {
+//	if (scalar == 0.0)
+//		throw std::invalid_argument("Vertex division by zero");
+//	return Vertex(x_ / scalar, y_ / scalar);
+//}
 

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <functional>
 #include <stdexcept>
+#include <math.h>
 
 using _Vertex_t = int;
 
@@ -21,8 +22,8 @@ public: // ctors & dtor
 	}
 
 	Vertex(Vertex&& other) noexcept :
-		x_(std::move(other.x_)),
-		y_(std::move(other.y_))
+		x_(std::exchange(other.x_, 0)),
+		y_(std::exchange(other.y_, 0))
 	{
 		other.x_ = other.y_ = 0;
 		//std::cout << "Move ctor\n";
@@ -41,24 +42,49 @@ public: // getters & setters
 	template<typename T> void set_y(T&& vtx) { this->y_ = vtx.x_; }
 
 public: // math ops
-	Vertex operator+(_Vertex_t scalar);
-	Vertex operator-(_Vertex_t scalar);
-	Vertex operator*(_Vertex_t scalar);
-	Vertex operator/(_Vertex_t scalar);
+	//Vertex operator+(_Vertex_t scalar);
+	//Vertex operator-(_Vertex_t scalar);
+	//Vertex operator*(_Vertex_t scalar);
+	//Vertex operator/(_Vertex_t scalar);
 
-	// object modification
-	void operator+=(_Vertex_t scalar) { x_ += y_ += scalar; }
-	void operator-=(_Vertex_t scalar) { x_ -= y_ -= scalar; }
-	void operator*=(_Vertex_t scalar) { x_ *= y_ *= scalar; }
-	void operator/=(_Vertex_t scalar) {
-		if (scalar == 0.0)
-			throw std::invalid_argument("Vertex division by zero");
-		x_ /= y_ /= scalar;
+	//// object modification
+	//void operator+=(_Vertex_t scalar) { x_ += y_ += scalar; }
+	//void operator-=(_Vertex_t scalar) { x_ -= y_ -= scalar; }
+	//void operator*=(_Vertex_t scalar) { x_ *= y_ *= scalar; }
+	//void operator/=(_Vertex_t scalar) {
+	//	if (scalar == 0.0)
+	//		throw std::invalid_argument("Vertex division by zero");
+	//	x_ /= y_ /= scalar;
+	//}
+
+	Vertex&& operator+(Vertex delta) { return Vertex(x_ + delta.x_, y_ + delta.y_); }
+	Vertex&& operator-(Vertex delta) { return Vertex(x_ - delta.x_, y_ - delta.y_); }
+	Vertex&& operator*(Vertex delta) { return Vertex(x_ * delta.x_, y_ * delta.y_); }
+	Vertex&& operator/(Vertex delta) {
+		if (std::fpclassify((double)delta.x_) == FP_ZERO
+			or std::fpclassify((double)delta.y_) == FP_ZERO)
+			throw std::exception("Division by zero");
+		return Vertex(x_ / delta.x_, y_ / delta.y_);
 	}
+
+	//Vertex& operator+=(_Vertex_t scalar) { x_ + delta.x_, y_ + delta.y_; }
+	//Vertex& operator-=(_Vertex_t scalar) { x_ - delta.x_, y_ - delta.y_; }
+	//Vertex& operator*=(_Vertex_t scalar) { x_ * delta.x_, y_ * delta.y_; }
+	//Vertex& operator/=(_Vertex_t scalar) {
+	//	if (std::fpclassify((double)delta.x_) == FP_ZERO
+	//		or std::fpclassify((double)delta.y_) == FP_ZERO)
+	//		throw std::exception("Division by zero");
+	//	return Vertex(x_ / delta.x_, y / delta.y_);
+	//}
+
+	Vertex& operator+=(Vertex delta) { x_ += delta.x_, y_ += delta.y_; return *this; }
+	Vertex& operator-=(Vertex delta) { x_ -= delta.x_, y_ -= delta.y_; return *this; }
+	Vertex& operator*=(Vertex delta) { x_ *= delta.x_, y_ *= delta.y_; return *this; }
+	Vertex& operator/=(Vertex delta) { x_ /= delta.x_, y_ /= delta.y_; return *this; }
 
 	void operator=(_Vertex_t value) { x_ = y_ = value; }
 	Vertex& operator=(const Vertex& other) { this->x_ = other.x_; this->y_ = other.y_; return *this; }
-
+	Vertex& operator=(Vertex&& other) { this->x_ = other.x_; this->y_ = other.y_; return *this; }
 
 public:
 	// input operator >>
@@ -73,8 +99,7 @@ public:
 		requires (std::is_same_v<std::remove_reference_t<T>, Vertex>)
 	#endif
 	friend std::ostream& operator<<(std::ostream& os, T&& vtx) {
-		os << "x = " << vtx.x_ << std::endl
-			<< "y = " << vtx.y_ << std::endl;
+		os << '(' << vtx.x_ << "; " << vtx.y_ << ')';
 		return os;
 	}
 };
