@@ -14,12 +14,21 @@ int main() {
 	menu.add('s', "Add square", mm::addSquare, MenuItem::acts::RETURNS);
 	menu.add('c', "Change vertex", mm::change_vtx, MenuItem::acts::PARAMETER);
 	menu.add('p', "Print created shapes", mm::printShapes, MenuItem::acts::PARAMETER);
+	menu.add('t', "Save shapes to txt", mm::saveToTxt, MenuItem::acts::PARAMETER);
+	menu.add('j', "Save shapes to json", mm::saveToJson, MenuItem::acts::PARAMETER);
+	menu.add('f', "Load shapes from json", mm::fromJson, MenuItem::acts::PARAMETER);
 
 	Menu::showMenu(&menu);
-	
-	menu.cin_loop(shapes);
+	try {
+		menu.cin_loop(shapes);
+	}
+	catch (exception& ex) {
+		cout << "EXCEPTION: " << ex.what();
+	}
 
-	cout << "Max square: " << max_element(shapes.begin(), shapes.end(), [](auto& p1, auto& p2) { return p1->square() < p2->square(); })->get()->square();
-
+	if (!shapes.empty()) {
+		cout << "\nMax square: " << max_element(shapes.begin(), shapes.end(),
+			[](auto& p1, auto& p2) { return p1->square() < p2->square(); })->get()->square();
+	}
 	return 0;
 }

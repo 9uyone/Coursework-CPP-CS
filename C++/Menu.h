@@ -21,10 +21,11 @@ using _Menu_func = std::variant<void(*)(), std::shared_ptr<Shape>(*)(), void(*)(
 struct MenuItem {
 	std::string desc;
 	_Menu_func action;
+	// type of item function
 	static enum acts {
-		VOID,
-		RETURNS,
-		PARAMETER
+		VOID,		// void(*)()
+		RETURNS,	// std::shared_ptr<Shape>(*)()
+		PARAMETER	// void(*)(_Menu_shape_cont&)
 	};
 	acts actionType;
 	

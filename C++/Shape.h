@@ -15,20 +15,16 @@ public:
 public:
 	//Shape() = default;
 
-	template<typename InIt = std::istream_iterator<Vertex>>
-	Shape(size_t vertex_count, InIt it_begin = InIt(std::cin)) {
+	template<typename InIt>
+	//requires (std::is_base_of_v<std::input_iterator_tag, InIt>)
+	Shape(size_t vertex_count, InIt it_begin) {
 		if (vertex_count < 2)
 			throw std::domain_error("Count of vertex must be >= 2");
-		//vertices.resize(vertex_count);
-		//std::copy_n(it_begin, vertex_count, vertices.begin());
 		vertices.reserve(vertex_count);
 		std::copy_n(it_begin, vertex_count, std::back_inserter(vertices));
 	}
-	
-	Shape(std::initializer_list<Vertex> init) {
-		vertices.reserve(init.size());
-		vertices.assign(init);
-	}
+
+	Shape(std::initializer_list<Vertex> ilist) : vertices(ilist) {}
 
 	virtual void move(_Vertex_t deltaX, _Vertex_t deltaY) = 0;
 	virtual double square() = 0;
@@ -43,7 +39,7 @@ public:
 		return os;
 	}
 
-	//virtual void saveJson() = 0;
+	virtual nlohmann::json makeJson() = 0;
 
 	Vertex& operator[](size_t index) { return vertices.at(index); }
 

@@ -42,10 +42,6 @@ public: // getters & setters
 	template<typename T> void set_y(T&& vtx) { this->y_ = vtx.x_; }
 
 public: // math ops
-	//Vertex operator+(_Vertex_t scalar);
-	//Vertex operator-(_Vertex_t scalar);
-	//Vertex operator*(_Vertex_t scalar);
-	//Vertex operator/(_Vertex_t scalar);
 
 	//// object modification
 	//void operator+=(_Vertex_t scalar) { x_ += y_ += scalar; }
@@ -82,9 +78,16 @@ public: // math ops
 	Vertex& operator*=(Vertex delta) { x_ *= delta.x_, y_ *= delta.y_; return *this; }
 	Vertex& operator/=(Vertex delta) { x_ /= delta.x_, y_ /= delta.y_; return *this; }
 
-	void operator=(_Vertex_t value) { x_ = y_ = value; }
+	Vertex& operator=(_Vertex_t value) { x_ = y_ = value; return *this; }
 	Vertex& operator=(const Vertex& other) { this->x_ = other.x_; this->y_ = other.y_; return *this; }
-	Vertex& operator=(Vertex&& other) { this->x_ = other.x_; this->y_ = other.y_; return *this; }
+	Vertex& operator=(Vertex&& other) noexcept { this->x_ = other.x_; this->y_ = other.y_; return *this; }
+
+	
+public: // logical operators
+	bool operator==(Vertex other) { return (this->x_ == other.x_) && (this->y_ == other.y_); }
+	bool operator!=(Vertex other) { return !(*this == other); }
+
+	Vertex operator~() const { return {this->y_, this->x_}; }
 
 public:
 	// input operator >>
