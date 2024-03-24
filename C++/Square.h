@@ -5,17 +5,7 @@ class Square : public Shape {
 public: // ctors & dtor
 	//Square() : Shape() {}
 
-	// by left bottom point and side length
-	//template<typename InIt = std::istream_iterator<Vertex>> Square(InIt it = InIt(std::cin)) :
-	//	Shape(1, it) {
-	//	//_Vertex_t side = 5;
-	//	add_vertex(vertices[0].get_x(), vertices[0].get_x() + side);
-	//	add_vertex(vertices[0].get_x() + side, vertices[0].get_x() + side);
-	//	add_vertex(vertices[0].get_x() + side, vertices[0].get_x());
-	//} 
-
-	// by vertices
-	
+	// @brief by vertices list
 	Square(std::initializer_list<Vertex> ilist) : Shape(ilist) {
 		if (ilist.size() != 4)
 			throw std::invalid_argument("Square requires 4 vertices");
@@ -24,7 +14,7 @@ public: // ctors & dtor
 			throw std::invalid_argument("The given points don't form a square");
 	}
 
-	// by left bottom point and side length
+	// @brief by left bottom point and side length
 	Square(Vertex vtx, _Vertex_t side) :
 		Shape({ { vtx.get_x(), vtx.get_y() },
 			  { vtx.get_x(), vtx.get_y() + side },
@@ -34,9 +24,9 @@ public: // ctors & dtor
 		if (side <= 0)
 			throw std::invalid_argument("Side length should be > 0");
 	}
+
 	// @brief copies vertices using iterator
 	template<typename InIt>
-	//requires (std::is_base_of_v<std::input_iterator_tag, InIt>)
 	Square(InIt it_begin) :
 		Shape(4, it_begin) {}
 

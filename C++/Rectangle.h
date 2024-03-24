@@ -18,7 +18,6 @@ public: // ctors & dtor
 	}
 
 	template<typename InIt>
-	//requires (std::is_base_of_v<std::input_iterator_tag, InIt>)
 	Rectangle(InIt it_begin):
 		Shape(4, it_begin) {}
 

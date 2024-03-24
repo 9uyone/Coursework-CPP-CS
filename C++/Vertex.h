@@ -53,14 +53,14 @@ public: // math ops
 	//	x_ /= y_ /= scalar;
 	//}
 
-	Vertex&& operator+(Vertex delta) { return Vertex(x_ + delta.x_, y_ + delta.y_); }
-	Vertex&& operator-(Vertex delta) { return Vertex(x_ - delta.x_, y_ - delta.y_); }
-	Vertex&& operator*(Vertex delta) { return Vertex(x_ * delta.x_, y_ * delta.y_); }
-	Vertex&& operator/(Vertex delta) {
-		if (std::fpclassify((double)delta.x_) == FP_ZERO
-			or std::fpclassify((double)delta.y_) == FP_ZERO)
+	Vertex&& operator+(Vertex other) { return Vertex(x_ + other.x_, y_ + other.y_); }
+	Vertex&& operator-(Vertex other) { return Vertex(x_ - other.x_, y_ - other.y_); }
+	Vertex&& operator*(Vertex other) { return Vertex(x_ * other.x_, y_ * other.y_); }
+	Vertex&& operator/(Vertex other) {
+		if (std::fpclassify((double)other.x_) == FP_ZERO
+			or std::fpclassify((double)other.y_) == FP_ZERO)
 			throw std::exception("Division by zero");
-		return Vertex(x_ / delta.x_, y_ / delta.y_);
+		return Vertex(x_ / other.x_, y_ / other.y_);
 	}
 
 	//Vertex& operator+=(_Vertex_t scalar) { x_ + delta.x_, y_ + delta.y_; }
@@ -73,10 +73,10 @@ public: // math ops
 	//	return Vertex(x_ / delta.x_, y / delta.y_);
 	//}
 
-	Vertex& operator+=(Vertex delta) { x_ += delta.x_, y_ += delta.y_; return *this; }
-	Vertex& operator-=(Vertex delta) { x_ -= delta.x_, y_ -= delta.y_; return *this; }
-	Vertex& operator*=(Vertex delta) { x_ *= delta.x_, y_ *= delta.y_; return *this; }
-	Vertex& operator/=(Vertex delta) { x_ /= delta.x_, y_ /= delta.y_; return *this; }
+	Vertex& operator+=(Vertex other) { x_ += other.x_, y_ += other.y_; return *this; }
+	Vertex& operator-=(Vertex other) { x_ -= other.x_, y_ -= other.y_; return *this; }
+	Vertex& operator*=(Vertex other) { x_ *= other.x_, y_ *= other.y_; return *this; }
+	Vertex& operator/=(Vertex other) { x_ /= other.x_, y_ /= other.y_; return *this; }
 
 	Vertex& operator=(_Vertex_t value) { x_ = y_ = value; return *this; }
 	Vertex& operator=(const Vertex& other) { this->x_ = other.x_; this->y_ = other.y_; return *this; }

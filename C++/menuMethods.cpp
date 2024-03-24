@@ -97,13 +97,12 @@ namespace menuMethods {
 		std::cout << "Enter file name (without .json)\n";
 		std::string name = cin_aux::getName() + ".json";
 		std::ifstream file(name);
-		if (!file)
-			throw std::exception(std::format("Cannot open {} for reading", name).c_str());
 
-		nlohmann::json json;
-		json.parse(file);
+		nlohmann::json json = nlohmann::json::parse(file);
 		file.close();
-
+		if (json.empty() or !file)
+			throw std::exception(std::format("Cannot open {} for reading", name).c_str());
+		 
 		cont.reserve(1.5 * json["count"].get<size_t>());
 		for (auto it = json["shapes"].cbegin(); it != json["shapes"].cend(); ++it) {
 			std::string type = (*it)["type"];
@@ -111,7 +110,7 @@ namespace menuMethods {
 			auto& j_v = (*it)["vertices"];
 			std::vector<Vertex> verts;
 			std::for_each(j_v.cbegin(), j_v.cend(),
-				[&verts, &j_v](auto el) { verts.emplace_back(el["x"].get<_Vertex_t>(), el["y"].get<_Vertex_t>()); });
+				[&verts](auto el) { verts.emplace_back(el["x"].get<_Vertex_t>(), el["y"].get<_Vertex_t>()); });
 
 			if (type == "Rectangle") {
 				cont.push_back(std::make_shared<Rectangle>(Rectangle(verts.begin())));

@@ -23,7 +23,7 @@ int main() {
 		menu.cin_loop(shapes);
 	}
 	catch (exception& ex) {
-		cout << "EXCEPTION: " << ex.what();
+		cout << "\nEXCEPTION: " << ex.what();
 	}
 
 	if (!shapes.empty()) {

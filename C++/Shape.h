@@ -15,13 +15,18 @@ public:
 public:
 	//Shape() = default;
 
+	//template<typename InIt>
+	//Shape(size_t vertex_count, InIt it_begin) {
+	//	if (vertex_count < 2)
+	//		throw std::domain_error("Count of vertex must be >= 2");
+	//	vertices.reserve(vertex_count);
+	//	std::copy_n(it_begin, vertex_count, std::back_inserter(vertices));
+	//}
+
 	template<typename InIt>
-	//requires (std::is_base_of_v<std::input_iterator_tag, InIt>)
-	Shape(size_t vertex_count, InIt it_begin) {
+	Shape(size_t vertex_count, InIt it_begin) : vertices(it_begin, it_begin + vertex_count) {
 		if (vertex_count < 2)
 			throw std::domain_error("Count of vertex must be >= 2");
-		vertices.reserve(vertex_count);
-		std::copy_n(it_begin, vertex_count, std::back_inserter(vertices));
 	}
 
 	Shape(std::initializer_list<Vertex> ilist) : vertices(ilist) {}
