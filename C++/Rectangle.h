@@ -18,8 +18,9 @@ public: // ctors & dtor
 	}
 
 	template<typename InIt>
-	Rectangle(InIt it_begin):
-		Shape(4, it_begin) {}
+	Rectangle(InIt it_begin): Shape(4, it_begin) {
+		checkRectangle();
+	}
 
 	virtual ~Rectangle() {}
 
@@ -50,9 +51,16 @@ public:
 public:
 	// iostream operators
 	void showInfo(std::ostream& os = std::cout) override {
-		os << "RECTANGLE" << name << std::endl << "Vertices:" << std::endl;
-		os << "Square: " << square() << std::endl;
+		os << "RECTANGLE" << name << std::endl <<
+		"Square: " << square() << std::endl <<
+		"Vertices:" << std::endl;
 		for (Vertex& vtx : *this)
 			os << "\x1b[4G" << vtx << std::endl;
+	}
+
+private:
+	inline void checkRectangle() {
+		if (((*this)[2] - (*this)[0]).abs() != ((*this)[3] - (*this)[1]).abs())
+			throw std::invalid_argument("The given points don't form a rectangle");
 	}
 };

@@ -23,15 +23,11 @@ namespace menuMethods {
 
 	void printShapes(_Menu_shape_cont& cont);
 
-	// save
+	// file
 	void saveToTxt(_Menu_shape_cont& cont);
 	void saveToJson(_Menu_shape_cont& cont);
 	void fromJson(_Menu_shape_cont& cont);
 
 	// changing
 	void change_vtx(_Menu_shape_cont& cont);
-
-	// test
-	void w();
-	void d();
 }

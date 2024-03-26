@@ -53,25 +53,15 @@ public: // math ops
 	//	x_ /= y_ /= scalar;
 	//}
 
-	Vertex&& operator+(Vertex other) { return Vertex(x_ + other.x_, y_ + other.y_); }
-	Vertex&& operator-(Vertex other) { return Vertex(x_ - other.x_, y_ - other.y_); }
-	Vertex&& operator*(Vertex other) { return Vertex(x_ * other.x_, y_ * other.y_); }
-	Vertex&& operator/(Vertex other) {
+	Vertex operator+(Vertex other) { return { x_ + other.x_, y_ + other.y_ }; }
+	Vertex operator-(Vertex other) { return { x_ - other.x_, y_ - other.y_ }; }
+	Vertex operator*(Vertex other) { return { x_ * other.x_, y_ * other.y_ }; }
+	Vertex operator/(Vertex other) {
 		if (std::fpclassify((double)other.x_) == FP_ZERO
 			or std::fpclassify((double)other.y_) == FP_ZERO)
 			throw std::exception("Division by zero");
-		return Vertex(x_ / other.x_, y_ / other.y_);
+		return { x_ / other.x_, y_ / other.y_ };
 	}
-
-	//Vertex& operator+=(_Vertex_t scalar) { x_ + delta.x_, y_ + delta.y_; }
-	//Vertex& operator-=(_Vertex_t scalar) { x_ - delta.x_, y_ - delta.y_; }
-	//Vertex& operator*=(_Vertex_t scalar) { x_ * delta.x_, y_ * delta.y_; }
-	//Vertex& operator/=(_Vertex_t scalar) {
-	//	if (std::fpclassify((double)delta.x_) == FP_ZERO
-	//		or std::fpclassify((double)delta.y_) == FP_ZERO)
-	//		throw std::exception("Division by zero");
-	//	return Vertex(x_ / delta.x_, y / delta.y_);
-	//}
 
 	Vertex& operator+=(Vertex other) { x_ += other.x_, y_ += other.y_; return *this; }
 	Vertex& operator-=(Vertex other) { x_ -= other.x_, y_ -= other.y_; return *this; }
@@ -82,6 +72,7 @@ public: // math ops
 	Vertex& operator=(const Vertex& other) { this->x_ = other.x_; this->y_ = other.y_; return *this; }
 	Vertex& operator=(Vertex&& other) noexcept { this->x_ = other.x_; this->y_ = other.y_; return *this; }
 
+	Vertex abs() { return {static_cast<_Vertex_t>(std::fabs(x_)), static_cast<_Vertex_t>(std::fabs(y_))}; }
 	
 public: // logical operators
 	bool operator==(Vertex other) { return (this->x_ == other.x_) && (this->y_ == other.y_); }

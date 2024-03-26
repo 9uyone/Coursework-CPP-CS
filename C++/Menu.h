@@ -66,8 +66,8 @@ public:
 			print_item(submenu.first, submenu.second.desc);
 		
 		if (menu->parent != nullptr)
-			print_item(_Menu_back, "back");
-		print_item(_Menu_exit, "exit");
+			print_item(_Menu_back, "Back");
+		print_item(_Menu_exit, "Exit");
 
 		print_border(true);
 	}
@@ -89,8 +89,11 @@ public:
 	//only accepts containers with std::shared_ptr<Shape> as template typename
 	void cin_loop(_Menu_shape_cont& cont) {
 		while (1) {
-			std::cout << std::endl << "Select item: " << CSI"93m";
-			while (std::cin.peek() == '\n')	std::cin.ignore();
+			std::cout << "\nSelect item: " << CSI"93m";
+			while (std::cin.peek() == '\n') {
+				std::cin.ignore();
+				std::cout << CSI"0m" << "Select item: " << CSI"93m";
+			}
 			char ch = std::cin.get();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::cout << CSI"0m";

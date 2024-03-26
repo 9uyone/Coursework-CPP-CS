@@ -9,9 +9,7 @@ public: // ctors & dtor
 	Square(std::initializer_list<Vertex> ilist) : Shape(ilist) {
 		if (ilist.size() != 4)
 			throw std::invalid_argument("Square requires 4 vertices");
-
-		if (((*this)[1] - (*this)[0]) != ~((*this)[3] - (*this)[2]))
-			throw std::invalid_argument("The given points don't form a square");
+		checkSquare();
 	}
 
 	// @brief by left bottom point and side length
@@ -27,8 +25,9 @@ public: // ctors & dtor
 
 	// @brief copies vertices using iterator
 	template<typename InIt>
-	Square(InIt it_begin) :
-		Shape(4, it_begin) {}
+	Square(InIt it_begin) : Shape(4, it_begin) {
+		checkSquare();
+	}
 
 	virtual ~Square() {}
 
@@ -60,8 +59,9 @@ public:
 public:
 // iostream operators
 	void showInfo(std::ostream& os = std::cout) override {
-		os << "SQUARE " << name << std::endl << "Vertices:" << std::endl;
-		os << "Square: " << this->square() << std::endl;
+		os << "SQUARE " << name << std::endl <<
+		"Square: " << this->square() << std::endl <<
+		"Vertices:" << std::endl;
 		for (Vertex& vtx : *this)
 			os << "\x1b[4G" << vtx << std::endl;
 	}
@@ -73,5 +73,11 @@ public:
 		
 
 		return is;
+	}
+
+private:
+	inline void checkSquare() {
+		if((*this)[1] - (*this)[0] != (*this)[2] - (*this)[3])
+			throw std::invalid_argument("The given points don't form a square");
 	}
 };

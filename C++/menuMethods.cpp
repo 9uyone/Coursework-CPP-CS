@@ -97,7 +97,6 @@ namespace menuMethods {
 		std::cout << "Enter file name (without .json)\n";
 		std::string name = cin_aux::getName() + ".json";
 		std::ifstream file(name);
-
 		nlohmann::json json = nlohmann::json::parse(file);
 		file.close();
 		if (json.empty() or !file)
@@ -105,16 +104,14 @@ namespace menuMethods {
 		 
 		cont.reserve(1.5 * json["count"].get<size_t>());
 		for (auto it = json["shapes"].cbegin(); it != json["shapes"].cend(); ++it) {
-			std::string type = (*it)["type"];
-
 			auto& j_v = (*it)["vertices"];
 			std::vector<Vertex> verts;
 			std::for_each(j_v.cbegin(), j_v.cend(),
-				[&verts](auto el) { verts.emplace_back(el["x"].get<_Vertex_t>(), el["y"].get<_Vertex_t>()); });
+				[&verts](auto& el) { verts.emplace_back(el["x"].get<_Vertex_t>(), el["y"].get<_Vertex_t>()); });
 
-			if (type == "Rectangle") {
+			if ((*it)["type"] == "Rectangle") {
 				cont.push_back(std::make_shared<Rectangle>(Rectangle(verts.begin())));
-			} else if (type == "Square") {
+			} else if ((*it)["type"] == "Square") {
 				cont.push_back(std::make_shared<Square>(Square(verts.begin())));
 			}
 		}
@@ -124,6 +121,4 @@ namespace menuMethods {
 		cont[0]->operator[](2) = { 3, -2 };
 	}
 
-	void w() { std::cout << "ww\n"; }
-	void d() { std::cout << "ddd\n"; }
 }
