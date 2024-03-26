@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /diary.txt
 /C++/v.txt
 /C++/shapes.json
+*.json
