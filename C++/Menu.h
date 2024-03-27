@@ -41,9 +41,7 @@ class Menu {
 private:
 	Menu* parent = nullptr;
 	static inline Menu* current = nullptr;
-
-	std::unordered_map<char, MenuItem> items;
-	std::unordered_map<char, Menu> submenus;
+	std::unordered_map<char, std::variant<MenuItem, Menu>> items;
 
 public:
 	std::string desc;
@@ -61,9 +59,10 @@ public:
 		print_border();
 
 		for (auto& item : menu->items)
-			print_item(item.first, item.second.desc);
-		for (auto& submenu : menu->submenus)
-			print_item(submenu.first, submenu.second.desc);
+			//print_item(item.first, item.second);
+			print_item(item.first, std::visit([](auto&& args) { return args.desc; }, item.second));
+		//for (auto& submenu : menu->submenus)
+			//print_item(submenu.first, submenu.second.desc);
 		
 		if (menu->parent != nullptr)
 			print_item(_Menu_back, "Back");
@@ -73,17 +72,16 @@ public:
 	}
 
 	void add(char key, std::string desc, _Menu_func func, MenuItem::acts actionType) {
-		if (key == _Menu_exit or key == _Menu_back or
-			submenus.contains(key) or
-			!items.try_emplace(key, desc, func, actionType).second)
-				throw std::exception(std::format("{} char for menu item already used", key).c_str());
+		if (key == _Menu_exit or key == _Menu_back or items.contains(key))
+			throw std::exception(std::format("`{}` char for menu item already used", key).c_str());
+		items[key].emplace<0>(desc, func, actionType); // emplace as 0 - MenuItem
 	}
 
 	void add(char key, Menu& menu) {
 		if (key == _Menu_exit or key == _Menu_back or items.contains(key))
-			throw std::exception(std::format("{} char for menu item already used", key).c_str());
+			throw std::exception(std::format("`{}` char for menu item already used", key).c_str());
 		menu.parent = this;
-		submenus[key] = std::move(menu);
+		items[key] = menu;
 	}
 
 	//only accepts containers with std::shared_ptr<Shape> as template typename
@@ -103,27 +101,26 @@ public:
 			else if (ch == _Menu_back and current->parent != nullptr)
 				showMenu(current->parent);
 
-			else if (current->items.contains(ch)) {
-				std::cout << CSI"92m" << current->items[ch].desc << CSI"0m" << std::endl;
-				/*if (const auto* f_ptr = std::get_if<1>(&current->items[ch].action))
-					cont.push_back((*f_ptr)());
-				else std::get<void(*)()>(current->items[ch].action)();*/
-				auto& act = current->items[ch].action;
-				switch (current->items[ch].actionType) {
-					case MenuItem::acts::VOID:
-						std::get<0>(act)();
-						break;
-					case MenuItem::acts::RETURNS:
-						cont.push_back((*std::get<1>(act))());
-						break;
-					case MenuItem::acts::PARAMETER:
-						(*std::get<2>(act))(cont);
-						break;
-				}
-
+			else if (current->items.contains(ch)){
+				if (auto* ptr = std::get_if<0>(&current->items[ch])) { // if ptr != nullptr and items is MenuItem
+					std::cout << CSI"92m" << ptr->desc << CSI"0m" << std::endl;
+					/*if (const auto* f_ptr = std::get_if<1>(&current->items[ch].action))
+						cont.push_back((*f_ptr)());
+					else std::get<void(*)()>(current->items[ch].action)();*/
+					auto& act = ptr->action;
+					switch (ptr->actionType) {
+						case MenuItem::acts::VOID:
+							std::get<0>(act)();
+							break;
+						case MenuItem::acts::RETURNS:
+							cont.push_back((*std::get<1>(act))());
+							break;
+						case MenuItem::acts::PARAMETER:
+							(*std::get<2>(act))(cont);
+							break;
+					}
+				} else showMenu(&std::get<1>(current->items[ch]));
 			}
-			else if (current->submenus.contains(ch))
-				showMenu(&current->submenus.find(ch)->second);
 
 			else {
 				std::cout << CSI"31m" << CSI"A" << CSI"K";
