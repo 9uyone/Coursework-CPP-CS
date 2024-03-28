@@ -12,22 +12,14 @@ private:
 
 public: // ctors & dtor
 	Vertex(_Vertex_t x = 0, _Vertex_t y = 0) :
-		x_(x), y_(y) {
-		//std::cout << "Default ctor\n";
-	}
+		x_(x), y_(y) {}
 
 	Vertex(const Vertex& other) :
-		x_(other.x_), y_(other.y_) {
-		//std::cout << "Copy ctor\n";
-	}
+		x_(other.x_), y_(other.y_) {}
 
 	Vertex(Vertex&& other) noexcept :
 		x_(std::exchange(other.x_, 0)),
-		y_(std::exchange(other.y_, 0))
-	{
-		other.x_ = other.y_ = 0;
-		//std::cout << "Move ctor\n";
-	}
+		y_(std::exchange(other.y_, 0)) {}
 	
 	virtual ~Vertex() {}
 
@@ -36,64 +28,38 @@ public: // getters & setters
 	const _Vertex_t& get_y() const { return y_; }
 
 	void set_x(_Vertex_t value) { x_ = value; }
-	template<typename T> void set_x(T&& vtx) { this->x_ = vtx.x_; }
+	void set_x(Vertex vtx) { this->x_ = vtx.x_; }
 
 	void set_y(_Vertex_t value) { y_ = value; }
-	template<typename T> void set_y(T&& vtx) { this->y_ = vtx.x_; }
+	void set_y(Vertex vtx) { this->y_ = vtx.x_; }
 
-public: // math ops
+public: // assignment operators
+	Vertex& operator=(_Vertex_t value);
+	Vertex& operator=(const Vertex& other);
+	Vertex& operator=(Vertex&& other) noexcept;
 
-	//// object modification
-	//void operator+=(_Vertex_t scalar) { x_ += y_ += scalar; }
-	//void operator-=(_Vertex_t scalar) { x_ -= y_ -= scalar; }
-	//void operator*=(_Vertex_t scalar) { x_ *= y_ *= scalar; }
-	//void operator/=(_Vertex_t scalar) {
-	//	if (scalar == 0.0)
-	//		throw std::invalid_argument("Vertex division by zero");
-	//	x_ /= y_ /= scalar;
-	//}
+public: // comparison operators
+	bool operator==(Vertex other);
+	bool operator!=(Vertex other);
+	bool operator<(Vertex other);
 
-	Vertex operator+(Vertex other) { return { x_ + other.x_, y_ + other.y_ }; }
-	Vertex operator-(Vertex other) { return { x_ - other.x_, y_ - other.y_ }; }
-	Vertex operator*(Vertex other) { return { x_ * other.x_, y_ * other.y_ }; }
-	Vertex operator/(Vertex other) {
-		if (std::fpclassify((double)other.x_) == FP_ZERO
-			or std::fpclassify((double)other.y_) == FP_ZERO)
-			throw std::exception("Division by zero");
-		return { x_ / other.x_, y_ / other.y_ };
-	}
+public: // arithmetic ops
+	Vertex operator+(Vertex other) const;
+	Vertex operator-(Vertex other) const;
+	Vertex operator*(Vertex other) const;
+	Vertex operator/(Vertex other) const;
 
-	Vertex& operator+=(Vertex other) { x_ += other.x_, y_ += other.y_; return *this; }
-	Vertex& operator-=(Vertex other) { x_ -= other.x_, y_ -= other.y_; return *this; }
-	Vertex& operator*=(Vertex other) { x_ *= other.x_, y_ *= other.y_; return *this; }
-	Vertex& operator/=(Vertex other) { x_ /= other.x_, y_ /= other.y_; return *this; }
+	// with assignment
+	Vertex& operator+=(Vertex other);
+	Vertex& operator-=(Vertex other);
+	Vertex& operator*=(Vertex other);
+	Vertex& operator/=(Vertex other);
 
-	Vertex& operator=(_Vertex_t value) { x_ = y_ = value; return *this; }
-	Vertex& operator=(const Vertex& other) { this->x_ = other.x_; this->y_ = other.y_; return *this; }
-	Vertex& operator=(Vertex&& other) noexcept { this->x_ = other.x_; this->y_ = other.y_; return *this; }
-
-	Vertex abs() { return {static_cast<_Vertex_t>(std::fabs(x_)), static_cast<_Vertex_t>(std::fabs(y_))}; }
-	
-public: // logical operators
-	bool operator==(Vertex other) { return (this->x_ == other.x_) && (this->y_ == other.y_); }
-	bool operator!=(Vertex other) { return !(*this == other); }
-
-	Vertex operator~() const { return {this->y_, this->x_}; }
+	Vertex abs();
+	Vertex operator~() const;
 
 public:
-	// input operator >>
+	// iostream operators
 	friend std::istream& operator>>(std::istream& is, Vertex& vtx);
-
-	// output operator <<
-	#if __cplusplus < 202002L
-		template<typename T,
-			typename = std::enable_if_t<std::is_same<std::remove_reference_t<T>, Vertex>::value>>
-	#else
-		template<typename T>
-		requires (std::is_same_v<std::remove_reference_t<T>, Vertex>)
-	#endif
-	friend std::ostream& operator<<(std::ostream& os, T&& vtx) {
-		os << '(' << vtx.x_ << "; " << vtx.y_ << ')';
-		return os;
-	}
+	friend std::ostream& operator<<(std::ostream& os, Vertex vtx);
 };

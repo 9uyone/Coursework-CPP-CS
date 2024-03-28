@@ -25,7 +25,7 @@ int main() {
 		menu.add('c', create);
 
 		Menu modify("Modify");
-		modify.add('v', "Change vertex", mm::change_vtx, MenuItem::acts::PARAMETER);
+
 		menu.add('m', modify);
 
 		Menu save_load("File");

@@ -21,19 +21,19 @@ using _Menu_func = std::variant<void(*)(), std::shared_ptr<Shape>(*)(), void(*)(
 struct MenuItem {
 	std::string desc;
 	_Menu_func action;
-	// type of item function
-	static enum acts {
+
+	static enum acts { // type of item function
 		VOID,		// void(*)()
 		RETURNS,	// std::shared_ptr<Shape>(*)()
 		PARAMETER	// void(*)(_Menu_shape_cont&)
 	};
 	acts actionType;
-	
-	MenuItem(std::string& d, _Menu_func& f, acts actionType) {
-		this->desc = d;
-		this->action = std::move(f);
-		this->actionType = actionType;
-	}
+
+	MenuItem(std::string& d, _Menu_func& f, acts actionType) :
+		desc(d),
+		action(std::move(f)),
+		actionType(actionType) {}
+
 	MenuItem() = default;
 };
 
@@ -59,10 +59,7 @@ public:
 		print_border();
 
 		for (auto& item : menu->items)
-			//print_item(item.first, item.second);
 			print_item(item.first, std::visit([](auto&& args) { return args.desc; }, item.second));
-		//for (auto& submenu : menu->submenus)
-			//print_item(submenu.first, submenu.second.desc);
 		
 		if (menu->parent != nullptr)
 			print_item(_Menu_back, "Back");
@@ -84,13 +81,12 @@ public:
 		items[key] = menu;
 	}
 
-	//only accepts containers with std::shared_ptr<Shape> as template typename
 	void cin_loop(_Menu_shape_cont& cont) {
 		while (1) {
 			std::cout << "\nSelect item: " << CSI"93m";
 			while (std::cin.peek() == '\n') {
 				std::cin.ignore();
-				std::cout << CSI"0m" << "Select item: " << CSI"93m";
+				//std::cout << CSI"0m" << "Select item: " << CSI"93m";
 			}
 			char ch = std::cin.get();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -101,7 +97,7 @@ public:
 			else if (ch == _Menu_back and current->parent != nullptr)
 				showMenu(current->parent);
 
-			else if (current->items.contains(ch)){
+			else if (current->items.contains(ch)) {
 				if (auto* ptr = std::get_if<0>(&current->items[ch])) { // if ptr != nullptr and items is MenuItem
 					std::cout << CSI"92m" << ptr->desc << CSI"0m" << std::endl;
 					/*if (const auto* f_ptr = std::get_if<1>(&current->items[ch].action))
@@ -119,7 +115,7 @@ public:
 							(*std::get<2>(act))(cont);
 							break;
 					}
-				} else showMenu(&std::get<1>(current->items[ch]));
+				} else showMenu(&std::get<1>(current->items[ch])); // otherwise it's Menu object
 			}
 
 			else {
@@ -139,9 +135,9 @@ private:
 	}
 
 	inline static void print_border(bool drawBottom = false) {
-		std::cout << ESC"(0" << CSI"96m" << (drawBottom ? 'm' : 'l'); // enter line drawing mode & set color
+		std::cout << ESC"(0" << CSI"96m" << (drawBottom?'m':'l'); // enter line drawing mode & set color
 		for (short i = 0; i < _Menu_right_border - 2; i++, std::cout << 'q');
-		std::cout << (drawBottom ? 'j' : 'k');
+		std::cout << (drawBottom?'j':'k');
 		std::cout << ESC"(B" << CSI"0m" << std::endl; // quit line drawing mode & reset color
 	}
 };

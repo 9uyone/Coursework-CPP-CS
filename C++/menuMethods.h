@@ -29,5 +29,5 @@ namespace menuMethods {
 	void fromJson(_Menu_shape_cont& cont);
 
 	// changing
-	void change_vtx(_Menu_shape_cont& cont);
+
 }

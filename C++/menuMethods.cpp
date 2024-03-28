@@ -1,8 +1,6 @@
 #pragma once
 #include "menuMethods.h"
 
-#define CSI "\x1b["
-
 namespace menuMethods {
 	namespace cin_aux {
 		_Vertex_t getUnsigned() {
@@ -29,24 +27,26 @@ namespace menuMethods {
 	}
 	
 	std::shared_ptr<Shape> addRectangle() {
-		Vertex v1, v2;
-		std::cout << "Enter 1st point: ";
-		std::cin >> v1;
-		std::cout << "Enter 2nd point: ";
-		std::cin >> v2;
-
-		Rectangle obj(v1, v2);
+		Vertex vtx;
+		std::cout << "Enter left bottom vertex (x & y): ";
+		std::cin >> vtx;
+		std::cout << "Enter 1st side: ";
+		_Vertex_t side_1 = cin_aux::getUnsigned();
+		std::cout << "Enter 2nd side: ";
+		_Vertex_t side_2 = cin_aux::getUnsigned();
+		
+		Rectangle obj(vtx, side_1, side_2);
 		return std::make_shared<Rectangle>(std::move(obj));
 	}
 
 	std::shared_ptr<Shape> addSquare() {
-		Vertex bl_vtx;
-		std::cout << "Enter left bottom point: ";
-		std::cin >> bl_vtx;
+		Vertex vtx;
+		std::cout << "Enter left bottom vertex (x & y): ";
+		std::cin >> vtx;
 		std::cout << "Enter side: ";
 		_Vertex_t side = cin_aux::getUnsigned();
 
-		Square obj(bl_vtx, side);
+		Square obj(vtx, side);
 		return std::make_shared<Square>(std::move(obj));
 	}
 
@@ -105,20 +105,23 @@ namespace menuMethods {
 		cont.reserve(1.5 * json["count"].get<size_t>());
 		for (auto it = json["shapes"].cbegin(); it != json["shapes"].cend(); ++it) {
 			auto& j_v = (*it)["vertices"];
-			std::vector<Vertex> verts;
-			std::for_each(j_v.cbegin(), j_v.cend(),
-				[&verts](auto& el) { verts.emplace_back(el["x"].get<_Vertex_t>(), el["y"].get<_Vertex_t>()); });
+			//std::vector<Vertex> verts;
+			//std::for_each(j_v.cbegin(), j_v.cend(),
+				//[&verts](auto& el) { verts.emplace_back(el["x"].get<_Vertex_t>(), el["y"].get<_Vertex_t>()); });
 
 			if ((*it)["type"] == "Rectangle") {
-				cont.push_back(std::make_shared<Rectangle>(Rectangle(verts.begin())));
+				Vertex vtx{ (*it)["left_bottom_vertex"]["x"].get<_Vertex_t>(), (*it)["left_bottom_vertex"]["y"].get<_Vertex_t>() };
+				_Vertex_t s1 = (*it)["side_1"].get<_Vertex_t>();
+				_Vertex_t s2 = (*it)["side_2"].get<_Vertex_t>();
+				cont.push_back(std::make_shared<Rectangle>(Rectangle(vtx, s1, s2)));
 			} else if ((*it)["type"] == "Square") {
-				cont.push_back(std::make_shared<Square>(Square(verts.begin())));
+				Vertex vtx{ (*it)["left_bottom_vertex"]["x"].get<_Vertex_t>(), (*it)["left_bottom_vertex"]["y"].get<_Vertex_t>() };
+				_Vertex_t side = (*it)["side"].get<_Vertex_t>();
+				cont.push_back(std::make_shared<Square>(Square(vtx, side)));
 			}
 		}
 	}
 
-	void change_vtx(_Menu_shape_cont& cont) {
-		cont[0]->operator[](2) = { 3, -2 };
-	}
+	
 
 }
