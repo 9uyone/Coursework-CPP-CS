@@ -34,8 +34,8 @@ nlohmann::json Square::makeJson() {
 void Square::showInfo(std::ostream& os) {
 	os << "SQUARE " << name << std::endl <<
 		"Square: " << this->square() << std::endl <<
-		"Left bottom vertex: " << vtx_ <<
-		"Side length: " << side_ <<
+		"Left bottom vertex: " << vtx_ << std::endl <<
+		"Side length: " << side_ << std::endl <<
 		"Vertices:" << std::endl;
 	for (Vertex& vtx : *this)
 		os << "\x1b[4G" << vtx << std::endl;

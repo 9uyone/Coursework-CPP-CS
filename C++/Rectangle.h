@@ -35,7 +35,6 @@ public:
 
 	nlohmann::json makeJson() override;
 
-public:
 	void showInfo(std::ostream& os = std::cout) override;
 
 private:

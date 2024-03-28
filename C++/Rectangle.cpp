@@ -33,9 +33,9 @@ nlohmann::json Rectangle::makeJson() {
 void Rectangle::showInfo(std::ostream& os) {
 	os << "RECTANGLE" << name << std::endl <<
 		"Square: " << square() << std::endl <<
-		"Left bottom vertex: " << vtx_ <<
-		"Side 1 length: " << side_1_ <<
-		"Side 2 length: " << side_2_ <<
+		"Left bottom vertex: " << vtx_ << std::endl <<
+		"Side 1 length: " << side_1_ << std::endl <<
+		"Side 2 length: " << side_2_ << std::endl <<
 		"Vertices:" << std::endl;
 	for (Vertex& vtx : *this)
 		os << "\x1b[4G" << vtx << std::endl;
