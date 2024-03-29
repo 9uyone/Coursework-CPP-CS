@@ -22,7 +22,7 @@ struct MenuItem {
 	_Menu_func action;
 
 	static enum acts { // type of item function
-		VOID,		// void(*)()
+		NOTHING,	// void(*)()
 		RETURNS,	// std::shared_ptr<Shape>(*)()
 		PARAMETER	// void(*)(_Menu_shape_cont&)
 	};

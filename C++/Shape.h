@@ -13,13 +13,16 @@ protected:
 public:
 	std::string name;
 
-public: // ctors
-	// by iterators; unused in this project
+public: // vertices init ctors
 	template<typename InIt>
-	Shape(size_t vertex_count, InIt it_begin);
+	Shape(size_t vertex_count, InIt it_begin) :
+		vertices(it_begin, it_begin + vertex_count) {}
 
 	Shape(std::initializer_list<Vertex> ilist) :
 		vertices(ilist) {}
+
+	template<typename Verts_vec>
+	Shape(Verts_vec&& v) : vertices(std::forward<Verts_vec>(v)) {}
 
 	void move(_Vertex_t deltaX, _Vertex_t deltaY);
 
@@ -71,11 +74,3 @@ public: // iterator
 public:
 	virtual ~Shape() {}
 };
-
-
-template<typename InIt>
-inline Shape::Shape(size_t vertex_count, InIt it_begin)
-	: vertices(it_begin, it_begin + vertex_count) {
-		if (vertex_count < 2)
-			throw std::domain_error("Count of vertex must be >= 2");
-}

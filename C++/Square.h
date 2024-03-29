@@ -23,6 +23,9 @@ public: // ctors & dtor
 	// @brief by left bottom point and side length
 	Square(Vertex vtx, _Vertex_t side);
 
+	Square(Square& other);
+	Square(Square&& other) noexcept;
+
 	virtual ~Square() {}
 
 //methods

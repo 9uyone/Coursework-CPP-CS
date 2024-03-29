@@ -7,9 +7,11 @@ namespace menuMethods {
 			_Vertex_t n;
 			while (1) {
 				std::cin >> n;
+				//while (std::cin.peek() == ' ' or std::cin.peek() == '\n') std::cin.ignore();
 				if (!std::cin.good() or n <= 0) {
 					std::cin.clear();
 					std::cerr << CSI"31m" << CSI"K" << "The value should be > 0\n" << CSI"0m";
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				} else return n;
 			}
 		}
@@ -18,9 +20,11 @@ namespace menuMethods {
 			std::string name;
 			while (1) {
 				std::cin >> name;
+				//while (std::cin.peek() == ' ' or std::cin.peek() == '\n') std::cin.ignore();
 				if (!std::cin.good() or !std::regex_match(name, std::regex("^[a-zA-Z]\\w*$"))) {
 					std::cin.clear();
 					std::cerr << CSI"31m" << CSI"K" << "The name must start with a letter and contain alphanumeric symbols\n" << CSI"0m";
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				} else return name;
 			}
 		}

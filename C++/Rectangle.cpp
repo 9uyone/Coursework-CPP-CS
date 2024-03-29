@@ -10,6 +10,19 @@ Rectangle::Rectangle(Vertex vtx, _Vertex_t s1, _Vertex_t s2) :
 	side_1_(s1),
 	side_2_(s2) {}
 
+Rectangle::Rectangle(Rectangle& other) :
+	vtx_(other.vtx_),
+	side_1_(other.side_1_),
+	side_2_(other.side_2_),
+	Shape(other.vertices) {}
+
+Rectangle::Rectangle(Rectangle&& other) noexcept :
+	vtx_(std::move(other.vtx_)),
+	side_1_(std::exchange(other.side_1_, 0)),
+	side_2_(std::exchange(other.side_2_, 0)),
+	Shape(std::move(other.vertices)) {}
+
+
 double Rectangle::square() {
 	return std::fabs((vertices[2] - vertices[0]).get_x()) *
 		std::fabs((vertices[2] - vertices[0]).get_y());

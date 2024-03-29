@@ -12,6 +12,16 @@ Square::Square(Vertex vtx, _Vertex_t side) :
 		side_ = side;
 }
 
+Square::Square(Square& other) :
+	vtx_(other.vtx_),
+	side_(other.side_),
+	Shape(other.vertices) {}
+
+Square::Square(Square&& other) noexcept :
+	vtx_(std::move(other.vtx_)),
+	side_(std::exchange(other.side_, 0)),
+	Shape(std::move(other.vertices)) {}
+
 double Square::square() {
 	return std::pow(std::fabs((vertices[1] - vertices[0]).get_y()), 2);
 }
@@ -23,7 +33,6 @@ nlohmann::json Square::makeJson() {
 	json["left_bottom_vertex"] = { {"x", vtx_.get_x()}, {"y", vtx_.get_y()} };
 	json["side"] = side_;
 	json["square"] = square();
-	json["vertices"] = nlohmann::json::array();
 	for (Vertex& vtx : *this) {
 		json["vertices"].push_back({ { "x", vtx.get_x() }, { "y", vtx.get_y() } });
 	}

@@ -28,6 +28,9 @@ public: // ctors & dtor
 
 	Rectangle(Vertex vtx, _Vertex_t s1, _Vertex_t s2);
 
+	Rectangle(Rectangle& other);
+	Rectangle(Rectangle&& other) noexcept;
+
 	virtual ~Rectangle() {}
 
 public:

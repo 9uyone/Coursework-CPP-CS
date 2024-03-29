@@ -9,7 +9,6 @@
 #include <string>
 #include <regex>
 #include <format>
-#include <algorithm>
 
 namespace menuMethods {
 	namespace cin_aux {

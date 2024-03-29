@@ -1,7 +1,6 @@
 #include "Menu.h"
 
 void Menu::showMenu(Menu* menu) {
-	//system("cls");
 	current = menu;
 	std::cout << CSI"91m" << CSI << _Menu_right_border / 2 - menu->desc.size() / 2 + 1 << "G" <<
 		menu->desc <<
@@ -37,7 +36,6 @@ void Menu::cin_loop(_Menu_shape_cont& cont) {
 		std::cout << "\nSelect item: " << CSI"93m";
 		while (std::cin.peek() == '\n') {
 			std::cin.ignore();
-			//std::cout << CSI"0m" << "Select item: " << CSI"93m";
 		}
 		char ch = std::cin.get();
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -56,7 +54,7 @@ void Menu::cin_loop(_Menu_shape_cont& cont) {
 				else std::get<void(*)()>(current->items[ch].action)();*/
 				auto& act = ptr->action;
 				switch (ptr->actionType) {
-					case MenuItem::acts::VOID:
+					case MenuItem::acts::NOTHING:
 						std::get<0>(act)();
 						break;
 					case MenuItem::acts::RETURNS:
@@ -85,8 +83,8 @@ void Menu::print_item(const char key, const std::string& desc) {
 }
 
 void Menu::print_border(bool drawBottom) {
-	std::cout << ESC"(0" << CSI"96m" << (drawBottom?'m':'l'); // enter line drawing mode & set color
+	std::cout << ESC"(0" << CSI"96m" << (drawBottom ? 'm' : 'l'); // enter line drawing mode & set color
 	for (short i = 0; i < _Menu_right_border - 2; i++, std::cout << 'q');
-	std::cout << (drawBottom?'j':'k');
+	std::cout << (drawBottom ? 'j' : 'k');
 	std::cout << ESC"(B" << CSI"0m" << std::endl; // quit line drawing mode & reset color
 }

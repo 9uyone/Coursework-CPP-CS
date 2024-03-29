@@ -92,7 +92,7 @@ std::istream& operator>>(std::istream& is, Vertex& vtx) {
 			if (is.fail()) {
 				is.clear();
 				is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cerr << "\x1b[31m" << "Input error" << "\x1b[0m";
+				std::cerr << "\x1b[31m" << "Input error\n" << "\x1b[0m";
 			} else break;
 		}
 		(i == 0?vtx.set_x(value):vtx.set_y(value));
