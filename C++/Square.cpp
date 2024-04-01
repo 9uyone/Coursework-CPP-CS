@@ -1,7 +1,7 @@
 #include "Square.h"
 
-Square::Square(Vertex vtx, _Vertex_t side) :
-	Shape({ { vtx.get_x(), vtx.get_y() },
+Square::Square(std::string name, Vertex vtx, _Vertex_t side) :
+	Shape(name, { { vtx.get_x(), vtx.get_y() },
 		  { vtx.get_x(), vtx.get_y() + side },
 		  { vtx.get_x() + side, vtx.get_y() + side },
 		  { vtx.get_x() + side, vtx.get_y() } })
@@ -15,12 +15,12 @@ Square::Square(Vertex vtx, _Vertex_t side) :
 Square::Square(Square& other) :
 	vtx_(other.vtx_),
 	side_(other.side_),
-	Shape(other.vertices) {}
+	Shape(other.name, other.vertices) {}
 
 Square::Square(Square&& other) noexcept :
 	vtx_(std::move(other.vtx_)),
 	side_(std::exchange(other.side_, 0)),
-	Shape(std::move(other.vertices)) {}
+	Shape(std::move(other.name), std::move(other.vertices)) {}
 
 double Square::square() {
 	return std::pow(std::fabs((vertices[1] - vertices[0]).get_y()), 2);
@@ -29,7 +29,7 @@ double Square::square() {
 nlohmann::json Square::makeJson() {
 	nlohmann::json json;
 	json["type"] = "Square";
-	//json["name"] = name;
+	json["name"] = name;
 	json["left_bottom_vertex"] = { {"x", vtx_.get_x()}, {"y", vtx_.get_y()} };
 	json["side"] = side_;
 	json["square"] = square();

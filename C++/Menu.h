@@ -39,14 +39,14 @@ struct MenuItem {
 class Menu {
 private:
 	Menu* parent = nullptr;
-	static inline Menu* current = nullptr;
+	static Menu* current;
 	std::unordered_map<char, std::variant<MenuItem, Menu>> items;
 
 public:
 	std::string desc;
 
 	Menu(std::string& desc) : desc(desc) {}
-	Menu(std::string&& desc = "Main menu") : desc(std::move(desc)) {}
+	Menu(std::string&& desc) : desc(std::move(desc)) {}
 
 	static void showMenu(Menu* menu);
 
@@ -55,6 +55,7 @@ public:
 
 	void cin_loop(_Menu_shape_cont& cont);
 
+	static void _Print_error(std::string msg);
 private:
 	static void print_item(const char key, const std::string& desc);
 	static void print_border(bool drawBottom = false);

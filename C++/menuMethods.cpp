@@ -3,60 +3,79 @@
 
 namespace menuMethods {
 	namespace cin_aux {
-		_Vertex_t getUnsigned() {
+		_Vertex_t getUnsigned(std::string prompt) {
 			_Vertex_t n;
 			while (1) {
+				std::cout << prompt << ": ";
 				std::cin >> n;
-				//while (std::cin.peek() == ' ' or std::cin.peek() == '\n') std::cin.ignore();
 				if (!std::cin.good() or n <= 0) {
 					std::cin.clear();
-					std::cerr << CSI"31m" << CSI"K" << "The value should be > 0\n" << CSI"0m";
+					Menu::_Print_error("Value should be > 0");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				} else return n;
 			}
 		}
 
-		std::string getName() {
+		std::string getName(std::string prompt) {
 			std::string name;
 			while (1) {
+				std::cout << prompt << ": " << std::endl;
 				std::cin >> name;
-				//while (std::cin.peek() == ' ' or std::cin.peek() == '\n') std::cin.ignore();
 				if (!std::cin.good() or !std::regex_match(name, std::regex("^[a-zA-Z]\\w*$"))) {
 					std::cin.clear();
-					std::cerr << CSI"31m" << CSI"K" << "The name must start with a letter and contain alphanumeric symbols\n" << CSI"0m";
+					Menu::_Print_error("Name must start with a letter and contain alphanumeric symbols");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				} else return name;
 			}
 		}
 	}
-	
-	std::shared_ptr<Shape> addRectangle() {
-		Vertex vtx;
+
+	void addRectangle(_Menu_shape_cont& cont) {
+		std::string name;
+		while (1) {
+			name = cin_aux::getName("Enter name");
+			if (std::find_if(cont.cbegin(), cont.cend(),
+							 [&cont, &name](auto& el) { return el->name == name; }) != cont.cend())
+				Menu::_Print_error("This name already exists");
+			else break;
+		}
+
 		std::cout << "Enter left bottom vertex (x & y): ";
-		std::cin >> vtx;
-		std::cout << "Enter 1st side: ";
-		_Vertex_t side_1 = cin_aux::getUnsigned();
-		std::cout << "Enter 2nd side: ";
-		_Vertex_t side_2 = cin_aux::getUnsigned();
+		Vertex vtx; std::cin >> vtx;
+		_Vertex_t side_1 = cin_aux::getUnsigned("Enter 1st side");
+		_Vertex_t side_2 = cin_aux::getUnsigned("Enter 2nd side");
 		
-		Rectangle obj(vtx, side_1, side_2);
-		return std::make_shared<Rectangle>(std::move(obj));
+		Rectangle obj(name, vtx, side_1, side_2);
+		cont.push_back(std::make_shared<Rectangle>(std::move(obj)));
 	}
 
-	std::shared_ptr<Shape> addSquare() {
+	void addSquare(_Menu_shape_cont& cont) {
+		std::string name;
+		while (1) {
+			name = cin_aux::getName("Enter name");
+			if (std::find_if(cont.cbegin(), cont.cend(),
+							 [&cont, &name](auto& el) { return el->name == name; }) != cont.cend())
+				Menu::_Print_error("This name already exists");
+			else break;
+		}
+
 		Vertex vtx;
 		std::cout << "Enter left bottom vertex (x & y): ";
 		std::cin >> vtx;
-		std::cout << "Enter side: ";
-		_Vertex_t side = cin_aux::getUnsigned();
+		_Vertex_t side = cin_aux::getUnsigned("Enter side");
 
-		Square obj(vtx, side);
-		return std::make_shared<Square>(std::move(obj));
+		Square obj(name, vtx, side);
+		cont.push_back(std::make_shared<Square>(std::move(obj)));
 	}
 
 	void printShapes(_Menu_shape_cont& cont) {
 		for (auto& obj : cont)
 			std::cout << *obj << std::endl;
+	}
+
+	void printNames(_Menu_shape_cont& cont) {
+		for (int i = 1; i <= cont.size(); ++i)
+			std::cout << i << ". " << cont[i - 1]->name << std::endl;
 	}
 
 	void saveToTxt(_Menu_shape_cont& cont) {
@@ -65,8 +84,7 @@ namespace menuMethods {
 			return;
 		}
 		
-		std::cout << "Enter file name (without .txt)\n";
-		std::string name = cin_aux::getName() + ".txt";
+		std::string name = cin_aux::getName("Enter file name (without .txt)") + ".txt";
 		std::ofstream file(name);
 		if (!file)
 			throw std::exception(std::format("Cannot open {} for writing", name).c_str());
@@ -82,8 +100,7 @@ namespace menuMethods {
 			return;
 		}
 		
-		std::cout << "Enter file name (without .json)\n";
-		std::string name = cin_aux::getName() + ".json";
+		std::string name = cin_aux::getName("Enter file name (w/o .json)") + ".json";
 		std::ofstream file(name);
 		if (!file)
 			throw std::exception(std::format("Cannot open {} for writing", name).c_str());
@@ -98,8 +115,7 @@ namespace menuMethods {
 	}
 
 	void fromJson(_Menu_shape_cont& cont) {
-		std::cout << "Enter file name (without .json)\n";
-		std::string name = cin_aux::getName() + ".json";
+		std::string name = cin_aux::getName("Enter file name (without .json)") + ".json";
 		std::ifstream file(name);
 		nlohmann::json json = nlohmann::json::parse(file);
 		file.close();
@@ -108,24 +124,40 @@ namespace menuMethods {
 		 
 		cont.reserve(1.5 * json["count"].get<size_t>());
 		for (auto it = json["shapes"].cbegin(); it != json["shapes"].cend(); ++it) {
-			auto& j_v = (*it)["vertices"];
-			//std::vector<Vertex> verts;
-			//std::for_each(j_v.cbegin(), j_v.cend(),
-				//[&verts](auto& el) { verts.emplace_back(el["x"].get<_Vertex_t>(), el["y"].get<_Vertex_t>()); });
-
 			if ((*it)["type"] == "Rectangle") {
+				std::string name = (*it)["name"];
 				Vertex vtx{ (*it)["left_bottom_vertex"]["x"].get<_Vertex_t>(), (*it)["left_bottom_vertex"]["y"].get<_Vertex_t>() };
 				_Vertex_t s1 = (*it)["side_1"].get<_Vertex_t>();
 				_Vertex_t s2 = (*it)["side_2"].get<_Vertex_t>();
-				cont.push_back(std::make_shared<Rectangle>(Rectangle(vtx, s1, s2)));
-			} else if ((*it)["type"] == "Square") {
+				cont.push_back(std::make_shared<Rectangle>(Rectangle(name, vtx, s1, s2)));
+			}
+
+			else if ((*it)["type"] == "Square") {
+				std::string name = (*it)["name"];
 				Vertex vtx{ (*it)["left_bottom_vertex"]["x"].get<_Vertex_t>(), (*it)["left_bottom_vertex"]["y"].get<_Vertex_t>() };
 				_Vertex_t side = (*it)["side"].get<_Vertex_t>();
-				cont.push_back(std::make_shared<Square>(Square(vtx, side)));
+				cont.push_back(std::make_shared<Square>(Square(name, vtx, side)));
 			}
 		}
 	}
 
-	
+	void move(_Menu_shape_cont& cont) {
+		printNames(cont);
+		int index;
+		while (1) {
+			std::cout << "Select name index: ";
+			std::cin >> index;
+			if (!std::cin.good() or !(index >= 1 && index <= cont.size())) {
+				std::cin.clear();
+				Menu::_Print_error("Incorrect index");
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			} else break;
+		}
+
+		std::cout << "How much the shape will be shifted in x & y: ";
+		Vertex vtx;
+		std::cin >> vtx;
+		cont[index - 1]->move(vtx.get_x(), vtx.get_y());
+	}
 
 }

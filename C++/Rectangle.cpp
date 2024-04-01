@@ -1,7 +1,7 @@
 #include "Rectangle.h"
 
-Rectangle::Rectangle(Vertex vtx, _Vertex_t s1, _Vertex_t s2) :
-	Shape({ vtx,
+Rectangle::Rectangle(std::string name, Vertex vtx, _Vertex_t s1, _Vertex_t s2) :
+	Shape(name, { vtx,
 		  {vtx.get_x(), vtx.get_y() + s1},
 		  {vtx.get_x() + s2, vtx.get_y() + s1},
 		  {vtx.get_x() + s2, vtx.get_y()}
@@ -14,13 +14,13 @@ Rectangle::Rectangle(Rectangle& other) :
 	vtx_(other.vtx_),
 	side_1_(other.side_1_),
 	side_2_(other.side_2_),
-	Shape(other.vertices) {}
+	Shape(other.name, other.vertices) {}
 
 Rectangle::Rectangle(Rectangle&& other) noexcept :
 	vtx_(std::move(other.vtx_)),
 	side_1_(std::exchange(other.side_1_, 0)),
 	side_2_(std::exchange(other.side_2_, 0)),
-	Shape(std::move(other.vertices)) {}
+	Shape(std::move(other.name), std::move(other.vertices)) {}
 
 
 double Rectangle::square() {
@@ -31,7 +31,7 @@ double Rectangle::square() {
 nlohmann::json Rectangle::makeJson() {
 	nlohmann::json json;
 	json["type"] = "Rectangle";
-	//json["name"] = name;
+	json["name"] = name;
 	json["left_bottom_vertex"] = { {"x", vtx_.get_x()}, {"y", vtx_.get_y()} };
 	json["side_1"] = side_1_;
 	json["side_2"] = side_2_;

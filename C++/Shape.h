@@ -15,15 +15,22 @@ public:
 
 public: // vertices init ctors
 	template<typename InIt>
-	Shape(size_t vertex_count, InIt it_begin) :
+	Shape(std::string name, size_t vertex_count, InIt it_begin) :
+		name(name),
 		vertices(it_begin, it_begin + vertex_count) {}
 
-	Shape(std::initializer_list<Vertex> ilist) :
+	Shape(std::string name, std::initializer_list<Vertex> ilist) :
+		name(name),
 		vertices(ilist) {}
 
 	template<typename Verts_vec>
-	Shape(Verts_vec&& v) : vertices(std::forward<Verts_vec>(v)) {}
+	Shape(std::string name, Verts_vec&& v) :
+		name(name),
+		vertices(std::forward<Verts_vec>(v)) {}
 
+	virtual ~Shape() {}
+
+public: // methods
 	void move(_Vertex_t deltaX, _Vertex_t deltaY);
 
 	virtual double square() = 0;
@@ -70,7 +77,4 @@ public: // iterator
 
 	iterator begin();
 	iterator end();
-
-public:
-	virtual ~Shape() {}
 };

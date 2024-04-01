@@ -26,7 +26,7 @@ public: // ctors & dtor
 		checkRectangle();
 	}*/
 
-	Rectangle(Vertex vtx, _Vertex_t s1, _Vertex_t s2);
+	Rectangle(std::string name, Vertex vtx, _Vertex_t s1, _Vertex_t s2);
 
 	Rectangle(Rectangle& other);
 	Rectangle(Rectangle&& other) noexcept;

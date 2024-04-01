@@ -1,4 +1,5 @@
 #include "Menu.h"
+Menu* Menu::current = nullptr;
 
 void Menu::showMenu(Menu* menu) {
 	current = menu;
@@ -33,7 +34,7 @@ void Menu::add(char key, Menu& menu) {
 
 void Menu::cin_loop(_Menu_shape_cont& cont) {
 	while (1) {
-		std::cout << "\nSelect item: " << CSI"93m";
+		std::cout << "Select item: " << CSI"93m";
 		while (std::cin.peek() == '\n') {
 			std::cin.ignore();
 		}
@@ -41,11 +42,14 @@ void Menu::cin_loop(_Menu_shape_cont& cont) {
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		std::cout << CSI"0m";
 
-		if (ch == _Menu_exit)
+		if (ch == _Menu_exit) {
+			std::cout << CSI"92m" << "Exit" << CSI"0m" << std::endl;
 			break;
-		else if (ch == _Menu_back and current->parent != nullptr)
+		}
+		else if (ch == _Menu_back and current->parent != nullptr) {
+			std::cout << CSI"92m" << "Back" << CSI"0m" << std::endl;
 			showMenu(current->parent);
-
+		}
 		else if (current->items.contains(ch)) {
 			if (auto* ptr = std::get_if<0>(&current->items[ch])) { // if ptr != nullptr and items is MenuItem
 				std::cout << CSI"92m" << ptr->desc << CSI"0m" << std::endl;
@@ -64,15 +68,17 @@ void Menu::cin_loop(_Menu_shape_cont& cont) {
 						(*std::get<2>(act))(cont);
 						break;
 				}
-			} else showMenu(&std::get<1>(current->items[ch])); // otherwise it's Menu object
+				std::cout << std::endl;
+				showMenu(current);
+			}
+			else showMenu(&std::get<1>(current->items[ch])); // otherwise it's Menu object
 		}
-
-		else {
-			std::cout << CSI"31m" << CSI"A" << CSI"K";
-			std::cerr << "Input error";
-			std::cout << CSI"0m";
-		}
+		else Menu::_Print_error("Input error");
 	}
+}
+
+void Menu::_Print_error(std::string msg) {
+	std::cerr << CSI"31m" << CSI"A" << CSI"K" << msg << std::endl << CSI"0m";
 }
 
 void Menu::print_item(const char key, const std::string& desc) {

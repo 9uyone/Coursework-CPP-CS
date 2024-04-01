@@ -9,18 +9,21 @@
 #include <string>
 #include <regex>
 #include <format>
+#include <algorithm>
 
 namespace menuMethods {
 	namespace cin_aux {
-		_Vertex_t getUnsigned();
-		std::string getName();
+		_Vertex_t getUnsigned(std::string prompt);
+		std::string getName(std::string prompt);
 	}
 
 	// creating
-	std::shared_ptr<Shape> addRectangle();
-	std::shared_ptr<Shape> addSquare();
+	void addRectangle(_Menu_shape_cont& cont);
+	void addSquare(_Menu_shape_cont& cont);
 
+	// printing
 	void printShapes(_Menu_shape_cont& cont);
+	void printNames(_Menu_shape_cont& cont);
 
 	// file
 	void saveToTxt(_Menu_shape_cont& cont);
@@ -28,5 +31,5 @@ namespace menuMethods {
 	void fromJson(_Menu_shape_cont& cont);
 
 	// changing
-
+	void move(_Menu_shape_cont& cont);
 }

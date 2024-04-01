@@ -95,7 +95,7 @@ std::istream& operator>>(std::istream& is, Vertex& vtx) {
 				std::cerr << "\x1b[31m" << "Input error\n" << "\x1b[0m";
 			} else break;
 		}
-		(i == 0?vtx.set_x(value):vtx.set_y(value));
+		(i == 0 ? vtx.set_x(value) : vtx.set_y(value));
 	}
 	return is;
 }
