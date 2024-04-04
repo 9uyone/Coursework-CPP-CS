@@ -10,6 +10,7 @@
 #include <regex>
 #include <format>
 #include <algorithm>
+#include <iterator>
 
 namespace menuMethods {
 	namespace cin_aux {

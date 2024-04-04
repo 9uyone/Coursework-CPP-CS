@@ -8,7 +8,11 @@ Rectangle::Rectangle(std::string name, Vertex vtx, _Vertex_t s1, _Vertex_t s2) :
 		  }),
 	vtx_(vtx),
 	side_1_(s1),
-	side_2_(s2) {}
+	side_2_(s2)
+{
+	if (s1 <= 0 or s2 <= 0)
+		throw std::invalid_argument("Side lengths must be > 0");
+}
 
 Rectangle::Rectangle(Rectangle& other) :
 	vtx_(other.vtx_),
@@ -24,8 +28,9 @@ Rectangle::Rectangle(Rectangle&& other) noexcept :
 
 
 double Rectangle::square() {
-	return std::fabs((vertices[2] - vertices[0]).get_x()) *
-		std::fabs((vertices[2] - vertices[0]).get_y());
+	//return std::fabs((vertices[2] - vertices[0]).get_x()) *
+		//std::fabs((vertices[2] - vertices[0]).get_y());
+	return side_1_ * side_2_;
 }
 
 nlohmann::json Rectangle::makeJson() {
@@ -36,7 +41,7 @@ nlohmann::json Rectangle::makeJson() {
 	json["side_1"] = side_1_;
 	json["side_2"] = side_2_;
 	json["square"] = square();
-	for (Vertex& vtx : *this) {
+	for (auto& vtx : *this) {
 		json["vertices"].push_back({ { "x", vtx.get_x() }, { "y", vtx.get_y() } });
 	}
 
@@ -44,13 +49,13 @@ nlohmann::json Rectangle::makeJson() {
 }
 
 void Rectangle::showInfo(std::ostream& os) {
-	os << "RECTANGLE" << name << std::endl <<
+	os << "RECTANGLE " << name << std::endl <<
 		"Square: " << square() << std::endl <<
 		"Left bottom vertex: " << vtx_ << std::endl <<
 		"Side 1 length: " << side_1_ << std::endl <<
 		"Side 2 length: " << side_2_ << std::endl <<
 		"Vertices:" << std::endl;
-	for (Vertex& vtx : *this)
+	for (auto& vtx : *this)
 		os << "\x1b[4G" << vtx << std::endl;
 }
 

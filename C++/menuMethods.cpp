@@ -158,6 +158,8 @@ namespace menuMethods {
 		Vertex vtx;
 		std::cin >> vtx;
 		cont[index - 1]->move(vtx.get_x(), vtx.get_y());
+		std::cout << "The new vertices are:\n";
+		std::copy(cont[index - 1]->begin(), cont[index - 1]->end(), std::ostream_iterator<Vertex>(std::cout, "\n"));
 	}
 
 }

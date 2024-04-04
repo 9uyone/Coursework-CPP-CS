@@ -41,40 +41,82 @@ public: // methods
 	virtual nlohmann::json makeJson() = 0;
 
 public: // iterator
-	struct iterator {
+	struct const_iterator {
 		using iterator_category = std::random_access_iterator_tag;
 		using difference_type = std::ptrdiff_t;
-		using value_type = Vertex;
-		using pointer = Vertex*;
-		using reference = Vertex&;
+		using value_type = const Vertex;
+		using pointer = const Vertex*;
+		using reference = const Vertex&;
 
-		iterator(pointer ptr) : m_ptr(ptr) {}
-		iterator(iterator& other) : m_ptr(other.m_ptr) {}
-		iterator(iterator&& other) noexcept : m_ptr(std::move(other.m_ptr)) {}
-
+		const_iterator(pointer ptr) : ptr(ptr) {}
+		const_iterator(const const_iterator& other) : ptr(other.ptr) {}
+		const_iterator operator=(const const_iterator& other) { ptr = other.ptr; }
+		
 		reference operator*() const {
-			return *m_ptr;
+			return *ptr;
 		}
-		pointer operator->() {
-			return m_ptr;
+		pointer operator->() const {
+			return ptr;
 		}
-		iterator& operator++() {
-			m_ptr++; return *this;
+
+		const_iterator& operator++() {
+			++ptr; return *this;
 		}
-		iterator operator++(int) {
-			iterator tmp = *this; ++(*this); return tmp;
+		const_iterator operator++(int) {
+			const_iterator tmp = *this; ++(*this); return tmp;
 		}
-		friend bool operator== (const iterator& a, const iterator& b) {
-			return a.m_ptr == b.m_ptr;
+		const_iterator& operator--() {
+			--ptr; return *this;
+		}
+		const_iterator operator--(int) {
+			const_iterator tmp = *this; --(*this); return tmp;
+		}
+
+		// Random access operators
+		const_iterator& operator+=(difference_type n) {
+			ptr += n;
+			return *this;
+		}
+		const_iterator operator+(difference_type n) const {
+			return const_iterator(ptr + n);
+		}
+		const_iterator& operator-=(difference_type n) {
+			ptr -= n;
+			return *this;
+		}
+		const_iterator operator-(difference_type n) const {
+			return const_iterator(ptr - n);
+		}
+
+		difference_type operator-(const const_iterator& other) const {
+			return ptr - other.ptr;
+		}
+
+		// comparison operators
+		bool operator== (const const_iterator& other) {
+			return ptr == other.ptr;
 		};
-		friend bool operator!= (const iterator& a, const iterator& b) {
-			return a.m_ptr != b.m_ptr;
+		bool operator!= (const const_iterator& other) {
+			return ptr != other.ptr;
 		};
+
+		bool operator<(const const_iterator& other) const {
+			return ptr < other.ptr;
+		}
+		bool operator>(const const_iterator& other) const {
+			return ptr > other.ptr;
+		}
+		bool operator<=(const const_iterator& other) const {
+			return ptr <= other.ptr;
+		}
+		bool operator>=(const const_iterator& other) const {
+			return ptr >= other.ptr;
+		}
 
 	private:
-		pointer m_ptr;
+		pointer ptr;
 	};
 
-	iterator begin();
-	iterator end();
+	const_iterator begin() const;
+	const_iterator end() const;
 };

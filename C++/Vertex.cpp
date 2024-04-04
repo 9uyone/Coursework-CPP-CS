@@ -1,6 +1,6 @@
 #include "Vertex.h"
 
-// assignment operators
+// assignment ops
 Vertex& Vertex::operator=(_Vertex_t value) {
 	x_ = y_ = value;
 	return *this;
@@ -16,16 +16,12 @@ Vertex& Vertex::operator=(Vertex&& other) noexcept {
 	return *this;
 }
 
-// comparison operators
+// comparison ops
 bool Vertex::operator==(Vertex other) {
 	return this->x_ == other.x_ && this->y_ == other.y_;
 }
 bool Vertex::operator!=(Vertex other) {
 	return !(*this == other);
-}
-bool Vertex::operator<(Vertex other) {
-	return sqrt(pow(this->x_, 2) + pow(this->y_, 2)) <
-		sqrt(pow(other.x_, 2) + pow(other.y_, 2));
 }
 
 // arithmetic ops
@@ -79,7 +75,7 @@ Vertex Vertex::operator~() const {
 }
 
 
-// input operator >>
+// input op >>
 std::istream& operator>>(std::istream& is, Vertex& vtx) {
 	_Vertex_t value;
 	for (uint8_t i(0); i < 2; ++i) {
@@ -100,8 +96,8 @@ std::istream& operator>>(std::istream& is, Vertex& vtx) {
 	return is;
 }
 
-// output operator <<
-std::ostream& operator<<(std::ostream& os, Vertex vtx) {
+// output op <<
+std::ostream& operator<<(std::ostream& os, const Vertex& vtx) {
 	os << '(' << vtx.x_ << "; " << vtx.y_ << ')';
 	return os;
 }

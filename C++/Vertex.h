@@ -28,17 +28,14 @@ public: // getters & setters
 	const _Vertex_t& get_y() const { return y_; }
 
 	void set_x(_Vertex_t value) { x_ = value; }
-	void set_x(Vertex vtx) { this->x_ = vtx.x_; }
-
 	void set_y(_Vertex_t value) { y_ = value; }
-	void set_y(Vertex vtx) { this->y_ = vtx.x_; }
 
-public: // assignment operators
+public: // assignment ops
 	Vertex& operator=(_Vertex_t value);
 	Vertex& operator=(const Vertex& other);
 	Vertex& operator=(Vertex&& other) noexcept;
 
-public: // comparison operators
+public: // comparison ops
 	bool operator==(Vertex other);
 	bool operator!=(Vertex other);
 	bool operator<(Vertex other);
@@ -59,7 +56,7 @@ public: // arithmetic ops
 	Vertex operator~() const;
 
 public:
-	// iostream operators
+	// iostream ops
 	friend std::istream& operator>>(std::istream& is, Vertex& vtx);
-	friend std::ostream& operator<<(std::ostream& os, Vertex vtx);
+	friend std::ostream& operator<<(std::ostream& os, const Vertex& vtx);
 };
