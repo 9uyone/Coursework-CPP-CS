@@ -19,10 +19,10 @@ void Menu::showMenu(Menu* menu) {
 	print_border(true);
 }
 
-void Menu::add(char key, std::string desc, _Menu_func func, MenuItem::acts actionType) {
+void Menu::add(char key, std::string desc, _Menu_func func) {
 	if (key == _Menu_exit or key == _Menu_back or items.contains(key))
 		throw std::exception(std::format("`{}` char for menu item already used", key).c_str());
-	items[key].emplace<0>(desc, func, actionType); // emplace as 0 - MenuItem
+	items[key].emplace<0>(desc, func); // emplace as 0 - MenuItem
 }
 
 void Menu::add(char key, Menu& menu) {
@@ -56,18 +56,7 @@ void Menu::cin_loop(_Menu_shape_cont& cont) {
 				/*if (const auto* f_ptr = std::get_if<1>(&current->items[ch].action))
 					cont.push_back((*f_ptr)());
 				else std::get<void(*)()>(current->items[ch].action)();*/
-				auto& act = ptr->action;
-				switch (ptr->actionType) {
-					case MenuItem::acts::NOTHING:
-						std::get<0>(act)();
-						break;
-					case MenuItem::acts::RETURNS:
-						cont.push_back((*std::get<1>(act))());
-						break;
-					case MenuItem::acts::PARAMETER:
-						(*std::get<2>(act))(cont);
-						break;
-				}
+				(ptr->action)(cont);
 				std::cout << std::endl;
 				showMenu(current);
 			}

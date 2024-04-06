@@ -16,10 +16,18 @@ std::ostream& operator<<(std::ostream& os, Shape& shp) {
 }
 
 // iterator
-Shape::const_iterator Shape::begin() const {
+Shape::iterator Shape::begin() const {
+	return iterator(vertices.begin()._Ptr);
+}
+
+Shape::iterator Shape::end() const{
+	return iterator(vertices.end()._Ptr);
+}
+
+Shape::const_iterator Shape::cbegin() const {
 	return const_iterator(vertices.begin()._Ptr);
 }
 
-Shape::const_iterator Shape::end() const{
+Shape::const_iterator Shape::cend() const {
 	return const_iterator(vertices.end()._Ptr);
 }

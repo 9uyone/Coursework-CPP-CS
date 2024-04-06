@@ -12,21 +12,22 @@ int main() {
 	try {
 		Menu menu("Main menu");
 		Menu create("Create");
-		create.add('r', "Rectangle", mm::addRectangle, MenuItem::acts::PARAMETER);
-		create.add('s', "Square", mm::addSquare, MenuItem::acts::PARAMETER);
+		create.add('r', "Rectangle", mm::addRectangle);
+		create.add('s', "Square", mm::addSquare);
 		menu.add('c', create);
 
 		Menu modify("Modify");
-		modify.add('m', "Move", mm::move, MenuItem::acts::PARAMETER);
+		modify.add('m', "Move", mm::move);
 		menu.add('m', modify);
 
 		Menu save_load("File");
-		save_load.add('t', "Save to txt", mm::saveToTxt, MenuItem::acts::PARAMETER);
-		save_load.add('j', "Save to json", mm::saveToJson, MenuItem::acts::PARAMETER);
-		save_load.add('l', "Load from json", mm::fromJson, MenuItem::acts::PARAMETER);
+		save_load.add('t', "Save to txt", mm::saveToTxt);
+		save_load.add('j', "Save to json", mm::saveToJson);
+		save_load.add('l', "Load from json", mm::fromJson);
 		menu.add('f', save_load);
 
-		menu.add('p', "Print created shapes", mm::printShapes, MenuItem::acts::PARAMETER);
+		menu.add('p', "Print created shapes", mm::printShapes);
+		menu.add('n', "Print shape names", mm::printNames);
 
 		Menu::showMenu(&menu);
 		menu.cin_loop(shapes);

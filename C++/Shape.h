@@ -40,17 +40,18 @@ public: // methods
 
 	virtual nlohmann::json makeJson() = 0;
 
-public: // iterator
-	struct const_iterator {
+private: // iterator
+	template<typename Val_type>
+	struct base_iterator {
 		using iterator_category = std::random_access_iterator_tag;
 		using difference_type = std::ptrdiff_t;
-		using value_type = const Vertex;
-		using pointer = const Vertex*;
-		using reference = const Vertex&;
+		using value_type = Val_type;
+		using pointer = Val_type*;
+		using reference = Val_type&;
 
-		const_iterator(pointer ptr) : ptr(ptr) {}
-		const_iterator(const const_iterator& other) : ptr(other.ptr) {}
-		const_iterator operator=(const const_iterator& other) { ptr = other.ptr; }
+		base_iterator(pointer ptr) : ptr(ptr) {}
+		base_iterator(const base_iterator& other) : ptr(other.ptr) {}
+		base_iterator operator=(const base_iterator& other) { ptr = other.ptr; }
 		
 		reference operator*() const {
 			return *ptr;
@@ -59,64 +60,60 @@ public: // iterator
 			return ptr;
 		}
 
-		const_iterator& operator++() {
+		base_iterator& operator++() {
 			++ptr; return *this;
 		}
-		const_iterator operator++(int) {
-			const_iterator tmp = *this; ++(*this); return tmp;
+		base_iterator operator++(int) {
+			base_iterator tmp = *this; ++(*this); return tmp;
 		}
-		const_iterator& operator--() {
+		base_iterator& operator--() {
 			--ptr; return *this;
 		}
-		const_iterator operator--(int) {
-			const_iterator tmp = *this; --(*this); return tmp;
+		base_iterator operator--(int) {
+			iterator tmp = *this; --(*this); return tmp;
 		}
 
-		// Random access operators
-		const_iterator& operator+=(difference_type n) {
+		// Random access ops
+		base_iterator& operator+=(difference_type n) {
 			ptr += n;
 			return *this;
 		}
-		const_iterator operator+(difference_type n) const {
-			return const_iterator(ptr + n);
+		base_iterator operator+(difference_type n) const {
+			return iterator(ptr + n);
 		}
-		const_iterator& operator-=(difference_type n) {
+		base_iterator& operator-=(difference_type n) {
 			ptr -= n;
 			return *this;
 		}
-		const_iterator operator-(difference_type n) const {
-			return const_iterator(ptr - n);
+		base_iterator operator-(difference_type n) const {
+			return iterator(ptr - n);
 		}
 
-		difference_type operator-(const const_iterator& other) const {
+		difference_type operator-(const base_iterator& other) const {
 			return ptr - other.ptr;
 		}
 
-		// comparison operators
-		bool operator== (const const_iterator& other) {
+		// comparison ops
+		bool operator== (const base_iterator& other) {
 			return ptr == other.ptr;
 		};
-		bool operator!= (const const_iterator& other) {
+		bool operator!= (const base_iterator& other) {
 			return ptr != other.ptr;
 		};
 
-		bool operator<(const const_iterator& other) const {
-			return ptr < other.ptr;
-		}
-		bool operator>(const const_iterator& other) const {
-			return ptr > other.ptr;
-		}
-		bool operator<=(const const_iterator& other) const {
-			return ptr <= other.ptr;
-		}
-		bool operator>=(const const_iterator& other) const {
-			return ptr >= other.ptr;
-		}
-
-	private:
+	protected:
 		pointer ptr;
 	};
 
-	const_iterator begin() const;
-	const_iterator end() const;
+public:
+	using iterator = base_iterator<Vertex>;
+	using const_iterator = base_iterator<const Vertex>;
+
+protected:
+	iterator begin() const;
+	iterator end() const;
+
+public:
+	const_iterator cbegin() const;
+	const_iterator cend() const;
 };

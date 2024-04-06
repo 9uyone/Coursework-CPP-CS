@@ -15,23 +15,15 @@ const char _Menu_exit = '0';
 const uint16_t _Menu_right_border = 33;
 
 using _Menu_shape_cont = std::vector<std::shared_ptr<Shape>>;
-using _Menu_func = std::variant<void(*)(), std::shared_ptr<Shape>(*)(), void(*)(_Menu_shape_cont&)>;
+using _Menu_func = void(*)(_Menu_shape_cont&);
 
 struct MenuItem {
 	std::string desc;
 	_Menu_func action;
 
-	static enum acts { // type of item function
-		NOTHING,	// void(*)()
-		RETURNS,	// std::shared_ptr<Shape>(*)()
-		PARAMETER	// void(*)(_Menu_shape_cont&)
-	};
-	acts actionType;
-
-	MenuItem(std::string& d, _Menu_func& f, acts actionType) :
+	MenuItem(std::string& d, _Menu_func& f) :
 		desc(d),
-		action(std::move(f)),
-		actionType(actionType) {}
+		action(std::move(f)) {}
 
 	MenuItem() = default;
 };
@@ -50,7 +42,7 @@ public:
 
 	static void showMenu(Menu* menu);
 
-	void add(char key, std::string desc, _Menu_func func, MenuItem::acts actionType);
+	void add(char key, std::string desc, _Menu_func func);
 	void add(char key, Menu& menu);
 
 	void cin_loop(_Menu_shape_cont& cont);
