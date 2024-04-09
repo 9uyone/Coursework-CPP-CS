@@ -15,17 +15,32 @@ Rectangle::Rectangle(std::string name, Vertex vtx, _Vertex_t s1, _Vertex_t s2) :
 }
 
 Rectangle::Rectangle(Rectangle& other) :
+	Shape(other.name, other.vertices),
 	vtx_(other.vtx_),
 	side_1_(other.side_1_),
-	side_2_(other.side_2_),
-	Shape(other.name, other.vertices) {}
+	side_2_(other.side_2_) {}
 
 Rectangle::Rectangle(Rectangle&& other) noexcept :
+	Shape(std::move(other.name), std::move(other.vertices)),
 	vtx_(std::move(other.vtx_)),
 	side_1_(std::exchange(other.side_1_, 0)),
-	side_2_(std::exchange(other.side_2_, 0)),
-	Shape(std::move(other.name), std::move(other.vertices)) {}
+	side_2_(std::exchange(other.side_2_, 0)) {}
 
+Rectangle& Rectangle::operator=(Rectangle& other) {
+	name = other.name;
+	vertices = other.vertices;
+	vtx_ = other.vtx_;
+	side_1_ = other.side_1_;
+	side_2_ = other.side_2_;
+}
+
+Rectangle& Rectangle::operator=(Rectangle&& other) noexcept {
+	name = std::move(other.name);
+	vertices = std::move(other.vertices);
+	vtx_ = std::move(other.vtx_);
+	side_1_ = std::exchange(other.side_1_, 0);
+	side_2_ = std::exchange(other.side_2_, 0);
+}
 
 double Rectangle::square() {
 	//return std::fabs((vertices[2] - vertices[0]).get_x()) *

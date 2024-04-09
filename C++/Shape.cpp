@@ -1,8 +1,8 @@
 #include "Shape.h"
 
 void Shape::move(_Vertex_t deltaX, _Vertex_t deltaY) {
-	//for (auto& vtx : *this)
-	for (auto& vtx: vertices)
+	//for (Vertex& vtx: vertices)
+	for (Vertex& vtx : *this)
 		vtx += {deltaX, deltaY};
 }
 

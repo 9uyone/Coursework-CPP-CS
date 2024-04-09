@@ -26,6 +26,9 @@ public: // ctors & dtor
 	Square(Square& other);
 	Square(Square&& other) noexcept;
 
+	Square& operator=(Square& other);
+	Square& operator=(Square&& other) noexcept;
+
 	virtual ~Square() {}
 
 //methods

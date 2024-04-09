@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <math.h>
 
-using _Vertex_t = int;
+using _Vertex_t = float;
 
 class Vertex {
 private:

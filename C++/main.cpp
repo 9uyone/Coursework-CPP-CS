@@ -11,14 +11,16 @@ int main() {
 
 	try {
 		Menu menu("Main menu");
+
 		Menu create("Create");
 		create.add('r', "Rectangle", mm::addRectangle);
 		create.add('s', "Square", mm::addSquare);
 		menu.add('c', create);
 
-		Menu modify("Modify");
-		modify.add('m', "Move", mm::move);
-		menu.add('m', modify);
+		Menu edit("Edit");
+		edit.add('m', "Move", mm::move);
+		edit.add('r', "Remove", mm::move);
+		menu.add('e', edit);
 
 		Menu save_load("File");
 		save_load.add('t', "Save to txt", mm::saveToTxt);
@@ -26,7 +28,7 @@ int main() {
 		save_load.add('l', "Load from json", mm::fromJson);
 		menu.add('f', save_load);
 
-		menu.add('p', "Print created shapes", mm::printShapes);
+		menu.add('p', "Print shape info", mm::printShapes);
 		menu.add('n', "Print shape names", mm::printNames);
 
 		Menu::showMenu(&menu);

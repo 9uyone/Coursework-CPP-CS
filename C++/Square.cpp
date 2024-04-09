@@ -13,14 +13,28 @@ Square::Square(std::string name, Vertex vtx, _Vertex_t side) :
 }
 
 Square::Square(Square& other) :
+	Shape(other.name, other.vertices),
 	vtx_(other.vtx_),
-	side_(other.side_),
-	Shape(other.name, other.vertices) {}
+	side_(other.side_) {}
 
 Square::Square(Square&& other) noexcept :
+	Shape(std::move(other.name), std::move(other.vertices)),
 	vtx_(std::move(other.vtx_)),
-	side_(std::exchange(other.side_, 0)),
-	Shape(std::move(other.name), std::move(other.vertices)) {}
+	side_(std::exchange(other.side_, 0)) {}
+
+Square& Square::operator=(Square& other) {
+	name = other.name;
+	vertices = other.vertices;
+	vtx_ = other.vtx_;
+	side_ = other.side_;
+}
+
+Square& Square::operator=(Square&& other) noexcept {
+	name = std::move(other.name);
+	vertices = std::move(other.vertices);
+	vtx_ = std::move(other.vtx_);
+	side_ = std::exchange(other.side_, 0);
+}
 
 double Square::square() {
 	//return std::pow((vertices[1] - vertices[0]).get_y(), 2);

@@ -16,6 +16,7 @@ namespace menuMethods {
 	namespace cin_aux {
 		_Vertex_t getUnsigned(std::string prompt);
 		std::string getName(std::string prompt);
+		int getIndex(_Menu_shape_cont& cont);
 	}
 
 	// creating
@@ -33,4 +34,5 @@ namespace menuMethods {
 
 	// changing
 	void move(_Menu_shape_cont& cont);
+	void remove(_Menu_shape_cont& cont);
 }

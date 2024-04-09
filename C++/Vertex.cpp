@@ -11,8 +11,8 @@ Vertex& Vertex::operator=(const Vertex& other) {
 	return *this;
 }
 Vertex& Vertex::operator=(Vertex&& other) noexcept {
-	this->x_ = other.x_;
-	this->y_ = other.y_;
+	this->x_ = std::exchange(other.x_, 0);
+	this->y_ = std::exchange(other.y_, 0);
 	return *this;
 }
 

@@ -31,6 +31,9 @@ public: // ctors & dtor
 	Rectangle(Rectangle& other);
 	Rectangle(Rectangle&& other) noexcept;
 
+	Rectangle& operator=(Rectangle& other);
+	Rectangle& operator=(Rectangle&& other) noexcept;
+
 	virtual ~Rectangle() {}
 
 public:

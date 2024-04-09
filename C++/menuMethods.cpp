@@ -28,6 +28,22 @@ namespace menuMethods {
 				} else return name;
 			}
 		}
+		int getIndex(_Menu_shape_cont& cont) {
+			if (cont.empty()) {
+				std::cout << "Shape list is empty\n";
+				return -1;
+			}
+			int index;
+			while (1) {
+				std::cout << "Select name index: ";
+				std::cin >> index;
+				if (!std::cin.good() or !(index >= 1 && index <= cont.size())) {
+					std::cin.clear();
+					Menu::_Print_error("Incorrect index");
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				} else return index - 1;
+			}
+		}
 	}
 
 	void addRectangle(_Menu_shape_cont& cont) {
@@ -144,22 +160,23 @@ namespace menuMethods {
 	void move(_Menu_shape_cont& cont) {
 		printNames(cont);
 		int index;
-		while (1) {
-			std::cout << "Select name index: ";
-			std::cin >> index;
-			if (!std::cin.good() or !(index >= 1 && index <= cont.size())) {
-				std::cin.clear();
-				Menu::_Print_error("Incorrect index");
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			} else break;
-		}
-
+		if (index = cin_aux::getIndex(cont) == -1)
+			return;
 		std::cout << "How much the shape will be shifted in x & y: ";
 		Vertex vtx;
 		std::cin >> vtx;
-		cont[index - 1]->move(vtx.get_x(), vtx.get_y());
+		cont[index]->move(vtx.get_x(), vtx.get_y());
 		std::cout << "The new vertices are:\n";
-		std::copy(cont[index - 1]->cbegin(), cont[index - 1]->cend(), std::ostream_iterator<Vertex>(std::cout, "\n"));
+		std::copy(cont[index]->cbegin(), cont[index]->cend(), std::ostream_iterator<Vertex>(std::cout, "\n"));
 	}
 
+	void remove(_Menu_shape_cont& cont) {
+		printNames(cont);
+		int index;
+		if (index = cin_aux::getIndex(cont) == -1)
+			return;
+		cont.erase(cont.begin() + index);
+		std::cout << "Update shape list\n";
+		printNames(cont);
+	}
 }

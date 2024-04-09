@@ -105,15 +105,13 @@ private: // iterator
 		pointer ptr;
 	};
 
-public:
-	using iterator = base_iterator<Vertex>;
-	using const_iterator = base_iterator<const Vertex>;
-
 protected:
+	using iterator = base_iterator<Vertex>;
 	iterator begin() const;
 	iterator end() const;
 
 public:
+	using const_iterator = base_iterator<const Vertex>;
 	const_iterator cbegin() const;
 	const_iterator cend() const;
 };

@@ -53,9 +53,6 @@ void Menu::cin_loop(_Menu_shape_cont& cont) {
 		else if (current->items.contains(ch)) {
 			if (auto* ptr = std::get_if<0>(&current->items[ch])) { // if ptr != nullptr and items is MenuItem
 				std::cout << CSI"92m" << ptr->desc << CSI"0m" << std::endl;
-				/*if (const auto* f_ptr = std::get_if<1>(&current->items[ch].action))
-					cont.push_back((*f_ptr)());
-				else std::get<void(*)()>(current->items[ch].action)();*/
 				(ptr->action)(cont);
 				std::cout << std::endl;
 				showMenu(current);
@@ -71,7 +68,7 @@ void Menu::_Print_error(std::string msg) {
 }
 
 void Menu::print_item(const char key, const std::string& desc) {
-	std::cout << CSI"G";
+	//std::cout << CSI"G";
 	std::cout << CSI"93m" << key << CSI"0m" << " -> " << CSI"92m" << desc; // print menu item
 	std::cout << CSI << _Menu_right_border << "G" << CSI"96m" << ESC"(0" << 'x' << ESC"(B"; // print border char
 	std::cout << '\r' << std::endl;
