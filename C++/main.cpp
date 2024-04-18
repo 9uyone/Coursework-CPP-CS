@@ -20,6 +20,7 @@ int main() {
 		Menu edit("Edit");
 		edit.add('m', "Move", mm::move);
 		edit.add('r', "Remove", mm::move);
+		edit.add('c', "Clear", mm::clear);
 		menu.add('e', edit);
 
 		Menu save_load("File");
@@ -31,7 +32,7 @@ int main() {
 		menu.add('p', "Print shape info", mm::printShapes);
 		menu.add('n', "Print shape names", mm::printNames);
 
-		Menu::showMenu(&menu);
+		menu.showMenu();
 		menu.cin_loop(shapes);
 	}
 	catch (exception& ex) {

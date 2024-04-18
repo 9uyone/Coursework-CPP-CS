@@ -1,18 +1,18 @@
 #include "Menu.h"
 Menu* Menu::current = nullptr;
 
-void Menu::showMenu(Menu* menu) {
-	current = menu;
-	std::cout << CSI"91m" << CSI << _Menu_right_border / 2 - menu->desc.size() / 2 + 1 << "G" <<
-		menu->desc <<
+void Menu::showMenu() {
+	current = this;
+	std::cout << CSI"91m" << CSI << _Menu_right_border / 2 - this->desc.size() / 2 + 1 << "G" <<
+		this->desc <<
 		CSI"0m" << std::endl;
 
 	print_border();
 
-	for (auto& item : menu->items)
+	for (auto& item : this->items)
 		print_item(item.first, std::visit([](auto&& args) { return args.desc; }, item.second));
 
-	if (menu->parent != nullptr)
+	if (this->parent != nullptr)
 		print_item(_Menu_back, "Back");
 	print_item(_Menu_exit, "Exit");
 
@@ -48,16 +48,16 @@ void Menu::cin_loop(_Menu_shape_cont& cont) {
 		}
 		else if (ch == _Menu_back and current->parent != nullptr) {
 			std::cout << CSI"92m" << "Back" << CSI"0m" << std::endl;
-			showMenu(current->parent);
+			current->parent->showMenu();
 		}
 		else if (current->items.contains(ch)) {
 			if (auto* ptr = std::get_if<0>(&current->items[ch])) { // if ptr != nullptr and items is MenuItem
 				std::cout << CSI"92m" << ptr->desc << CSI"0m" << std::endl;
 				(ptr->action)(cont);
 				std::cout << std::endl;
-				showMenu(current);
+				current->showMenu();
 			}
-			else showMenu(&std::get<1>(current->items[ch])); // otherwise it's Menu object
+			else std::get<1>(current->items[ch]).showMenu(); // otherwise it's Menu object
 		}
 		else Menu::_Print_error("Input error");
 	}

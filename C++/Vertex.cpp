@@ -17,11 +17,25 @@ Vertex& Vertex::operator=(Vertex&& other) noexcept {
 }
 
 // comparison ops
-bool Vertex::operator==(Vertex other) {
+bool Vertex::operator==(const Vertex& other) {
 	return this->x_ == other.x_ && this->y_ == other.y_;
 }
-bool Vertex::operator!=(Vertex other) {
+bool Vertex::operator!=(const Vertex& other) {
 	return !(*this == other);
+}
+
+bool Vertex::operator<(const Vertex& other) {
+	//return this->hypot() < other.hypot();
+	return x_ < other.x_ || x_ == other.x_ && y_ < other.y_;
+}
+bool Vertex::operator>(const Vertex& other) {
+	return x_ > other.x_ || x_ == other.x_ && y_ > other.y_;
+}
+bool Vertex::operator<=(const Vertex& other) {
+	return *this < other || *this == other;
+}
+bool Vertex::operator>=(const Vertex& other) {
+	return *this > other || *this == other;
 }
 
 // arithmetic ops
@@ -63,17 +77,17 @@ Vertex& Vertex::operator/=(Vertex other) {
 	return *this;
 }
 
-Vertex Vertex::abs() {
+// additional ops
+Vertex Vertex::abs() const {
 	return {
 		static_cast<_Vertex_t>(std::fabs(x_)),
 		static_cast<_Vertex_t>(std::fabs(y_))
 	};
 }
 
-Vertex Vertex::operator~() const {
-	return { this->y_, this->x_ };
+_Vertex_t Vertex::hypot() const {
+	return std::hypot(x_, y_);
 }
-
 
 // input op >>
 std::istream& operator>>(std::istream& is, Vertex& vtx) {

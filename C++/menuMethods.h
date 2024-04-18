@@ -35,4 +35,5 @@ namespace menuMethods {
 	// changing
 	void move(_Menu_shape_cont& cont);
 	void remove(_Menu_shape_cont& cont);
+	void clear(_Menu_shape_cont& cont);
 }

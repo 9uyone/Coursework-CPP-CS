@@ -36,9 +36,12 @@ public: // assignment ops
 	Vertex& operator=(Vertex&& other) noexcept;
 
 public: // comparison ops
-	bool operator==(Vertex other);
-	bool operator!=(Vertex other);
-	bool operator<(Vertex other);
+	bool operator==(const Vertex& other);
+	bool operator!=(const Vertex& other);
+	bool operator<(const Vertex& other);
+	bool operator>(const Vertex& other);
+	bool operator<=(const Vertex& other);
+	bool operator>=(const Vertex& other);
 
 public: // arithmetic ops
 	Vertex operator+(Vertex other) const;
@@ -52,8 +55,9 @@ public: // arithmetic ops
 	Vertex& operator*=(Vertex other);
 	Vertex& operator/=(Vertex other);
 
-	Vertex abs();
-	Vertex operator~() const;
+	// additional ops
+	Vertex abs() const;
+	_Vertex_t hypot() const;
 
 public:
 	// iostream ops

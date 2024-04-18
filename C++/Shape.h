@@ -1,9 +1,11 @@
 #pragma once
 #include "Vertex.h"
 #include <vector>
+#include <string>
 #include <stdexcept>
 #include <iterator>
 #include <nlohmann/json.hpp>
+#include <algorithm>
 
 class Shape {
 protected:
@@ -17,18 +19,23 @@ public: // vertices init ctors
 	template<typename InIt>
 	Shape(std::string name, size_t vertex_count, InIt it_begin) :
 		name(name),
-		vertices(it_begin, it_begin + vertex_count) {}
+		vertices(it_begin, it_begin + vertex_count) { checkShape(); }
 
 	Shape(std::string name, std::initializer_list<Vertex> ilist) :
 		name(name),
-		vertices(ilist) {}
+		vertices(ilist) { checkShape(); }
 
 	template<typename Verts_vec>
+	requires(std::is_same_v<std::remove_reference_t<Verts_vec>, decltype(vertices)>)
 	Shape(std::string name, Verts_vec&& v) :
 		name(name),
-		vertices(std::forward<Verts_vec>(v)) {}
+		vertices(std::forward<Verts_vec>(v)) { checkShape(); }
 
 	virtual ~Shape() {}
+
+private:
+	bool isClockwise();
+	void checkShape();
 
 public: // methods
 	void move(_Vertex_t deltaX, _Vertex_t deltaY);

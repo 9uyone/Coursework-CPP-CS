@@ -40,7 +40,7 @@ public:
 	Menu(std::string& desc) : desc(desc) {}
 	Menu(std::string&& desc) : desc(std::move(desc)) {}
 
-	static void showMenu(Menu* menu);
+	void showMenu();
 
 	void add(char key, std::string desc, _Menu_func func);
 	void add(char key, Menu& menu);

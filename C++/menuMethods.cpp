@@ -8,7 +8,7 @@ namespace menuMethods {
 			while (1) {
 				std::cout << prompt << ": ";
 				std::cin >> n;
-				if (!std::cin.good() or n <= 0) {
+				if (std::cin.fail() or n <= 0) {
 					std::cin.clear();
 					Menu::_Print_error("Value should be > 0");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -21,7 +21,7 @@ namespace menuMethods {
 			while (1) {
 				std::cout << prompt << ": " << std::endl;
 				std::cin >> name;
-				if (!std::cin.good() or !std::regex_match(name, std::regex("^[a-zA-Z]\\w*$"))) {
+				if (std::cin.fail() or !std::regex_match(name, std::regex("^[a-zA-Z]\\w*$"))) {
 					std::cin.clear();
 					Menu::_Print_error("Name must start with a letter and contain alphanumeric symbols");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -37,7 +37,7 @@ namespace menuMethods {
 			while (1) {
 				std::cout << "Select name index: ";
 				std::cin >> index;
-				if (!std::cin.good() or !(index >= 1 && index <= cont.size())) {
+				if (std::cin.fail() or !(index >= 1 && index <= cont.size())) {
 					std::cin.clear();
 					Menu::_Print_error("Incorrect index");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -133,27 +133,23 @@ namespace menuMethods {
 	void fromJson(_Menu_shape_cont& cont) {
 		std::string name = cin_aux::getName("Enter file name (without .json)") + ".json";
 		std::ifstream file(name);
+		if (!file)
+			throw std::exception(std::format("Cannot open {} for reading", name).c_str());
 		nlohmann::json json = nlohmann::json::parse(file);
 		file.close();
-		if (json.empty() or !file)
-			throw std::exception(std::format("Cannot open {} for reading", name).c_str());
 		 
-		cont.reserve(1.5 * json["count"].get<size_t>());
 		for (auto it = json["shapes"].cbegin(); it != json["shapes"].cend(); ++it) {
-			if ((*it)["type"] == "Rectangle") {
-				std::string name = (*it)["name"];
-				Vertex vtx{ (*it)["left_bottom_vertex"]["x"].get<_Vertex_t>(), (*it)["left_bottom_vertex"]["y"].get<_Vertex_t>() };
-				_Vertex_t s1 = (*it)["side_1"].get<_Vertex_t>();
-				_Vertex_t s2 = (*it)["side_2"].get<_Vertex_t>();
-				cont.push_back(std::make_shared<Rectangle>(Rectangle(name, vtx, s1, s2)));
-			}
+			std::string name = (*it)["name"];
+			std::vector<Vertex> verts;
+			verts.reserve((*it)["vertices"].size());
+			std::for_each((*it)["vertices"].cbegin(), (*it)["vertices"].cend(), [&verts](auto& el) {
+				verts.emplace_back(el["x"].get<_Vertex_t>(), el["y"].get<_Vertex_t>());
+			});
 
-			else if ((*it)["type"] == "Square") {
-				std::string name = (*it)["name"];
-				Vertex vtx{ (*it)["left_bottom_vertex"]["x"].get<_Vertex_t>(), (*it)["left_bottom_vertex"]["y"].get<_Vertex_t>() };
-				_Vertex_t side = (*it)["side"].get<_Vertex_t>();
-				cont.push_back(std::make_shared<Square>(Square(name, vtx, side)));
-			}
+			if ((*it)["type"] == "Rectangle")
+				cont.push_back(std::make_shared<Rectangle>(Rectangle(name, verts.begin())));
+			else if ((*it)["type"] == "Square")
+				cont.push_back(std::make_shared<Square>(Square(name, verts.begin())));
 		}
 	}
 
@@ -176,7 +172,15 @@ namespace menuMethods {
 		if (index = cin_aux::getIndex(cont) == -1)
 			return;
 		cont.erase(cont.begin() + index);
-		std::cout << "Update shape list\n";
+		std::cout << "Updated shape list\n";
 		printNames(cont);
+	}
+	
+	void clear(_Menu_shape_cont& cont) {
+		std::cout << "Do you really want to clear all shapes? [y/n]: ";
+		if (std::cin.get() == 'y') {
+			cont.erase(cont.begin(), cont.end());
+			std::cout << "Successfully cleaned\n";
+		}
 	}
 }
