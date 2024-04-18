@@ -99,11 +99,14 @@ std::istream& operator>>(std::istream& is, Vertex& vtx) {
 
 			while (is.peek() == ' ' or is.peek() == '\n') is.ignore();
 			is >> value;
-			if (is.fail()) {
+			if (!is.good()) {
 				is.clear();
-				is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cerr << "\x1b[31m" << "Input error\n" << "\x1b[0m";
-			} else break;
+				throw std::exception("Vertex input error");
+			} else {
+				if (i == 1)
+					is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				break;
+			}
 		}
 		(i == 0 ? vtx.set_x(value) : vtx.set_y(value));
 	}

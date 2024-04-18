@@ -5,6 +5,7 @@
 #include <format>
 #include <variant>
 #include <vector>
+#include "simpleVector.h"
 #include "Shape.h"
 
 #define ESC "\x1b"
@@ -14,7 +15,8 @@ const char _Menu_back = '-';
 const char _Menu_exit = '0';
 const uint16_t _Menu_right_border = 33;
 
-using _Menu_shape_cont = std::vector<std::shared_ptr<Shape>>;
+//using _Menu_shape_cont = std::vector<std::shared_ptr<Shape>>;
+using _Menu_shape_cont = simpleVector<std::shared_ptr<Shape>>;
 using _Menu_func = void(*)(_Menu_shape_cont&);
 
 struct MenuItem {

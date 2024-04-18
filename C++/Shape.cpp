@@ -30,19 +30,30 @@ std::ostream& operator<<(std::ostream& os, Shape& shp) {
 	return os;
 }
 
-// iterator
-Shape::iterator Shape::begin() const {
-	return iterator(vertices.begin()._Ptr);
+//Vertex* Shape::begin() {
+//	return vertices.begin()._Ptr;
+//}
+//Vertex* Shape::end() {
+//	return vertices.end()._Ptr;
+//}
+//
+//const Vertex* Shape::cbegin() {
+//	return vertices.cbegin()._Ptr;
+//}
+//const Vertex* Shape::cend() {
+//	return vertices.cend()._Ptr;
+//}
+
+_Shape_vertices_cont::iterator Shape::begin() {
+	return vertices.begin();
+}
+_Shape_vertices_cont::iterator Shape::end() {
+	return vertices.end();
 }
 
-Shape::iterator Shape::end() const{
-	return iterator(vertices.end()._Ptr);
+_Shape_vertices_cont::const_iterator Shape::cbegin() {
+	return vertices.cbegin();
 }
-
-Shape::const_iterator Shape::cbegin() const {
-	return const_iterator(vertices.begin()._Ptr);
-}
-
-Shape::const_iterator Shape::cend() const {
-	return const_iterator(vertices.end()._Ptr);
+_Shape_vertices_cont::const_iterator Shape::cend() {
+	return vertices.cend();
 }

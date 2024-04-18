@@ -12,22 +12,29 @@ namespace menuMethods {
 					std::cin.clear();
 					Menu::_Print_error("Value should be > 0");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				} else return n;
+				} else {
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					return n;
+				}
 			}
 		}
 
 		std::string getName(std::string prompt) {
 			std::string name;
 			while (1) {
-				std::cout << prompt << ": " << std::endl;
+				std::cout << prompt << ": ";
 				std::cin >> name;
 				if (std::cin.fail() or !std::regex_match(name, std::regex("^[a-zA-Z]\\w*$"))) {
 					std::cin.clear();
 					Menu::_Print_error("Name must start with a letter and contain alphanumeric symbols");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				} else return name;
+				} else {
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					return name;
+				}
 			}
 		}
+
 		int getIndex(_Menu_shape_cont& cont) {
 			if (cont.empty()) {
 				std::cout << "Shape list is empty\n";
@@ -37,11 +44,31 @@ namespace menuMethods {
 			while (1) {
 				std::cout << "Select name index: ";
 				std::cin >> index;
+				//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				if (std::cin.fail() or !(index >= 1 && index <= cont.size())) {
 					std::cin.clear();
 					Menu::_Print_error("Incorrect index");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				} else return index - 1;
+				} else {
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					return index - 1;
+				}
+			}
+		}
+
+		Vertex getVertex(std::string prompt) {
+			Vertex vtx;
+			while (true) {
+			vtx_input:
+				std::cout << prompt << ": ";
+				try {
+					std::cin >> vtx;
+				} catch (std::exception&) {
+					Menu::_Print_error("Input error!");
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					goto vtx_input;
+				}
+				return vtx;
 			}
 		}
 	}
@@ -56,8 +83,9 @@ namespace menuMethods {
 			else break;
 		}
 
-		std::cout << "Enter left bottom vertex (x & y): ";
-		Vertex vtx; std::cin >> vtx;
+		//std::cout << "Enter left bottom vertex (x & y): ";
+		//Vertex vtx; std::cin >> vtx;
+		Vertex vtx = cin_aux::getVertex("Enter left bottom vertex (x & y)");
 		_Vertex_t side_1 = cin_aux::getUnsigned("Enter 1st side");
 		_Vertex_t side_2 = cin_aux::getUnsigned("Enter 2nd side");
 		
@@ -75,21 +103,28 @@ namespace menuMethods {
 			else break;
 		}
 
-		Vertex vtx;
-		std::cout << "Enter left bottom vertex (x & y): ";
-		std::cin >> vtx;
+		Vertex vtx = cin_aux::getVertex("Enter left bottom vertex (x & y)");
+		//std::cout << "Enter left bottom vertex (x & y): ";
+		//std::cin >> vtx;
 		_Vertex_t side = cin_aux::getUnsigned("Enter side");
-
 		Square obj(name, vtx, side);
 		cont.push_back(std::make_shared<Square>(std::move(obj)));
 	}
 
 	void printShapes(_Menu_shape_cont& cont) {
+		if (cont.empty()) {
+			std::cout << "Nothing to print\n";
+			return;
+		}
 		for (auto& obj : cont)
 			std::cout << *obj << std::endl;
 	}
 
 	void printNames(_Menu_shape_cont& cont) {
+		if (cont.empty()) {
+			std::cout << "Nothing to print\n";
+			return;
+		}
 		for (int i = 1; i <= cont.size(); ++i)
 			std::cout << i << ". " << cont[i - 1]->name << std::endl;
 	}
@@ -137,7 +172,7 @@ namespace menuMethods {
 			throw std::exception(std::format("Cannot open {} for reading", name).c_str());
 		nlohmann::json json = nlohmann::json::parse(file);
 		file.close();
-		 
+		
 		for (auto it = json["shapes"].cbegin(); it != json["shapes"].cend(); ++it) {
 			std::string name = (*it)["name"];
 			std::vector<Vertex> verts;

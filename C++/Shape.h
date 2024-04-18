@@ -7,9 +7,11 @@
 #include <nlohmann/json.hpp>
 #include <algorithm>
 
+using _Shape_vertices_cont = std::vector<Vertex>;
+
 class Shape {
 protected:
-	std::vector<Vertex> vertices{};
+	_Shape_vertices_cont vertices{};
 	Vertex& operator[](size_t index);
 
 public:
@@ -47,78 +49,11 @@ public: // methods
 
 	virtual nlohmann::json makeJson() = 0;
 
-private: // iterator
-	template<typename Val_type>
-	struct base_iterator {
-		using iterator_category = std::random_access_iterator_tag;
-		using difference_type = std::ptrdiff_t;
-		using value_type = Val_type;
-		using pointer = Val_type*;
-		using reference = Val_type&;
-
-		base_iterator(pointer ptr) : ptr(ptr) {}
-		base_iterator(const base_iterator& other) : ptr(other.ptr) {}
-		base_iterator operator=(const base_iterator& other) { ptr = other.ptr; }
-		
-		reference operator*() const {
-			return *ptr;
-		}
-		pointer operator->() const {
-			return ptr;
-		}
-
-		base_iterator& operator++() {
-			++ptr; return *this;
-		}
-		base_iterator operator++(int) {
-			base_iterator tmp = *this; ++(*this); return tmp;
-		}
-		base_iterator& operator--() {
-			--ptr; return *this;
-		}
-		base_iterator operator--(int) {
-			iterator tmp = *this; --(*this); return tmp;
-		}
-
-		// Random access ops
-		base_iterator& operator+=(difference_type n) {
-			ptr += n;
-			return *this;
-		}
-		base_iterator operator+(difference_type n) const {
-			return iterator(ptr + n);
-		}
-		base_iterator& operator-=(difference_type n) {
-			ptr -= n;
-			return *this;
-		}
-		base_iterator operator-(difference_type n) const {
-			return iterator(ptr - n);
-		}
-
-		difference_type operator-(const base_iterator& other) const {
-			return ptr - other.ptr;
-		}
-
-		// comparison ops
-		bool operator== (const base_iterator& other) {
-			return ptr == other.ptr;
-		};
-		bool operator!= (const base_iterator& other) {
-			return ptr != other.ptr;
-		};
-
-	protected:
-		pointer ptr;
-	};
-
+private: // begin & end
 protected:
-	using iterator = base_iterator<Vertex>;
-	iterator begin() const;
-	iterator end() const;
-
+	_Shape_vertices_cont::iterator begin();
+	_Shape_vertices_cont::iterator end();
 public:
-	using const_iterator = base_iterator<const Vertex>;
-	const_iterator cbegin() const;
-	const_iterator cend() const;
+	_Shape_vertices_cont::const_iterator cbegin();
+	_Shape_vertices_cont::const_iterator cend();
 };

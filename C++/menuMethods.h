@@ -17,6 +17,7 @@ namespace menuMethods {
 		_Vertex_t getUnsigned(std::string prompt);
 		std::string getName(std::string prompt);
 		int getIndex(_Menu_shape_cont& cont);
+		Vertex getVertex(std::string prompt);
 	}
 
 	// creating

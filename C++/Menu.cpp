@@ -64,7 +64,7 @@ void Menu::cin_loop(_Menu_shape_cont& cont) {
 }
 
 void Menu::_Print_error(std::string msg) {
-	std::cerr << CSI"31m" << CSI"A" << CSI"K" << msg << std::endl << CSI"0m";
+	std::cerr << CSI"31m" << CSI"A" << CSI"K" << msg << CSI"0m" << std::endl;
 }
 
 void Menu::print_item(const char key, const std::string& desc) {
