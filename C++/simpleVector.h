@@ -1,7 +1,9 @@
 #pragma once
 #include <algorithm>
-#include <iterator>
 #include <stdexcept>
+#include <initializer_list>
+
+constexpr const float SV_CAP_INCR_COEF = 1.65;
 
 #pragma region header
 template<typename T>
@@ -11,17 +13,18 @@ class simpleVector {
 	size_t capacity_;
 
 public: //ctors and dtor
-	simpleVector(size_t initCapacity = 10) : capacity_(initCapacity), size_(0) {
-		arr_ = new T[capacity_]{};
-	}
+	using value_type = T;
+
+	simpleVector(size_t initCapacity = 10);
+	simpleVector(std::initializer_list<T> ilist);
+	simpleVector(simpleVector<T>& other);
+	simpleVector<T>& operator=(simpleVector<T>& other);
 
 	~simpleVector() { delete[] arr_; }
 
 private: // iterator
 	template<typename Val_type>
 	class base_iterator;
-
-	//class reverse_iterator : public base_iterator<T>;
 
 public:
 	using iterator = base_iterator<T>;
@@ -32,19 +35,20 @@ public:
 	const_iterator cbegin() const { return const_iterator(arr_); }
 	const_iterator cend() const { return const_iterator(arr_ + size_); }
 
-private: // capacity_
-	void recapacity(size_t newCapacity);
-	void recapacity();
-public:
+public: // capacity
 	size_t size() const { return size_; }
 	size_t capacity() const { return capacity_; }
+	void reserve(size_t newCapacity);
 	bool empty() const { return size_ == 0; }
 
 public: // modifiers
 	void push_back(const T& val);
 	void pop_back();
+	void insert(iterator pos, const T& value);
+	void append(iterator first, iterator last);
 	void erase(iterator it);
 	void erase(iterator first, iterator last);
+	void clear();
 	void resize(size_t newsize);
 
 public: // element access
@@ -56,8 +60,40 @@ public: // element access
 #pragma endregion
 
 
+// ctors
 template<typename T>
-inline void simpleVector<T>::recapacity(size_t newCapacity) {
+inline simpleVector<T>::simpleVector(size_t initCapacity) : capacity_(initCapacity), size_(0) {
+	arr_ = new T[capacity_]{};
+}
+
+template<typename T>
+inline simpleVector<T>::simpleVector(std::initializer_list<T> ilist) : capacity_(ilist.size()* SV_CAP_INCR_COEF), size_(ilist.size()) {
+	arr_ = new T[capacity_]{};
+	std::copy(ilist.begin(), ilist.end(), arr_);
+}
+
+template<typename T>
+inline simpleVector<T>::simpleVector(simpleVector<T>& other) {
+	clear();
+	reserve(other.capacity() * SV_CAP_INCR_COEF);
+	std::copy(other.begin(), other.end(), std::back_inserter(*this));
+}
+
+template<typename T>
+inline simpleVector<T>& simpleVector<T>::operator=(simpleVector<T>& other) {
+	clear();
+	reserve(other.capacity() * SV_CAP_INCR_COEF);
+	std::copy(other.begin(), other.end(), std::back_inserter(*this));
+	return *this;
+}
+
+
+// capacity
+template<typename T>
+inline void simpleVector<T>::reserve(size_t newCapacity) {
+	if (newCapacity <= capacity_)
+		return;
+
 	capacity_ = newCapacity;
 	T* newArr = new T[capacity_]{};
 	std::copy(arr_, arr_ + size_, newArr);
@@ -65,16 +101,11 @@ inline void simpleVector<T>::recapacity(size_t newCapacity) {
 	arr_ = newArr;
 }
 
-template<typename T>
-inline void simpleVector<T>::recapacity() {
-	recapacity(size_ * 2);
-}
-
 // modifiers
 template<typename T>
 inline void simpleVector<T>::push_back(const T& val) {
 	if (size_ >= capacity_)
-		recapacity();
+		reserve(SV_CAP_INCR_COEF * size_);
 	arr_[size_++] = val;
 }
 
@@ -82,6 +113,21 @@ template<typename T>
 inline void simpleVector<T>::pop_back() {
 	if (!size_)
 		throw std::exception("Nothing to pop");
+}
+
+template<typename T>
+inline void simpleVector<T>::insert(iterator pos, const T& value) {
+	if (std::distance(begin(), pos) > size_)
+		throw std::out_of_range("Incorrect insertion position");
+	if (size_ >= capacity_)
+		reserve(SV_CAP_INCR_COEF * size_);
+
+	arr_[std::distance(begin(), pos)] = value;
+}
+
+template<typename T>
+inline void simpleVector<T>::append(iterator first, iterator last) {
+	std::copy(first, last, std::back_inserter(*this));
 }
 
 template<typename T>
@@ -100,9 +146,14 @@ inline void simpleVector<T>::erase(iterator first, iterator last) {
 }
 
 template<typename T>
+inline void simpleVector<T>::clear() {
+	size_ = 0;
+}
+
+template<typename T>
 inline void simpleVector<T>::resize(size_t newsize) {
 	if (newsize > capacity_)
-		recapacity(1.5 * newsize);
+		reserve(SV_CAP_INCR_COEF * newsize);
 	size_ = newsize;
 }
 
@@ -139,8 +190,10 @@ public:
 	using pointer = Val_type*;
 	using reference = Val_type&;
 
+	base_iterator() = delete;
 	base_iterator(pointer ptr) : ptr(ptr) {}
 	base_iterator(const base_iterator& other) : ptr(other.ptr) {}
+
 	base_iterator operator=(const base_iterator& other) {
 		ptr = other.ptr;
 		return *this;
@@ -166,7 +219,7 @@ public:
 		iterator tmp = *this; --(*this); return tmp;
 	}
 
-	// Random access ops
+	// random access ops
 	base_iterator& operator+=(difference_type n) {
 		ptr += n;
 		return *this;
@@ -181,7 +234,6 @@ public:
 	base_iterator operator-(difference_type n) const {
 		return iterator(ptr - n);
 	}
-
 	difference_type operator-(const base_iterator& other) const {
 		return ptr - other.ptr;
 	}

@@ -40,7 +40,7 @@ private:
 	void checkShape();
 
 public: // methods
-	void move(_Vertex_t deltaX, _Vertex_t deltaY);
+	virtual void move(_Vertex_t deltaX, _Vertex_t deltaY);
 
 	virtual double square() = 0;
 

@@ -1,25 +1,30 @@
 #include <iostream>
-#include <vector>
 #include "menuMethods.h"
 #include "Menu.h"
 #include <algorithm>
 #include "simpleVector.h"
+#include <vector>
 
 using namespace std;
 namespace mm = menuMethods;
-#define MAIN_MENU
-int main() {
-#ifndef MAIN_MENU
-	simpleVector<int> sv(5);
-	sv.push_back(-5);
-	sv.push_back(6);
-	sv.push_back(-44);
-	sv.push_back(72);
-	sv.push_back(16);
-	
 
-	for (auto el : sv)
-		cout << el << "\n";
+int main() {
+#define MAIN_MENU
+#ifndef MAIN_MENU
+	try {
+		simpleVector<int> sv = { -5, 6, -44, 72, 16 };
+		simpleVector<int> sv2 = { 10, 100, -72, 36 };
+
+		sv2.erase(sv2.begin() + 1);
+		sv2.resize(2);
+		sv2.insert(sv2.begin() + 1, 777);
+
+		for (auto el : sv)
+			cout << el << "\n";
+		cout << "\n";
+		for (auto el : sv2)
+			cout << el << "\n";
+	} catch (exception& ex) { cout << "EXCEPTION: " << ex.what() << endl; }
 
 #else // MAIN_MENU
 	_Menu_shape_cont shapes;
@@ -38,26 +43,25 @@ int main() {
 		edit.add('c', "Clear", mm::clear);
 		menu.add('e', edit);
 
-		Menu save_load("File");
-		save_load.add('t', "Save to txt", mm::saveToTxt);
-		save_load.add('j', "Save to json", mm::saveToJson);
-		save_load.add('l', "Load from json", mm::fromJson);
-		menu.add('f', save_load);
+		Menu file("File");
+		file.add('t', "Save to txt", mm::saveToTxt);
+		file.add('j', "Save to json", mm::saveToJson);
+		file.add('l', "Load from json", mm::fromJson);
+		menu.add('f', file);
 
-		menu.add('p', "Print shape info", mm::printShapes);
-		menu.add('n', "Print shape names", mm::printNames);
+		Menu print("Print");
+		print.add('p', "Print shape info", mm::printShapes);
+		print.add('n', "Print shape names", mm::printNames);
+		print.add('s', "Print max square", mm::printMaxSquare);
+		menu.add('p', print);
 
 		menu.showMenu();
 		menu.cin_loop(shapes);
 	}
 	catch (exception& ex) {
-		cout << "\n\x1b[31m" << "EXCEPTION: " << ex.what();
+		Menu::_Print_error(std::format("EXCEPTION: {}", ex.what()));
 	}
 
-	if (!shapes.empty()) {
-		cout << "\nMax square: " << max_element(shapes.begin(), shapes.end(),
-			[](auto& p1, auto& p2) { return p1->square() < p2->square(); })->get()->square();
-	}
 #endif // MAIN_MENU
 	return 0;
 }

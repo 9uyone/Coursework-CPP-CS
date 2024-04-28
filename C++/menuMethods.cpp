@@ -35,6 +35,18 @@ namespace menuMethods {
 			}
 		}
 
+		std::string getNameWithFindCheck(_Menu_shape_cont& cont) {
+			std::string name;
+			while (1) {
+				name = cin_aux::getName("Enter name");
+				if (std::find_if(cont.cbegin(), cont.cend(), [&cont, &name](auto& el) {
+					return el->name == name;
+				}) != cont.cend())
+					Menu::_Print_error("This name already exists");
+				else return name;
+			}
+		}
+
 		int getIndex(_Menu_shape_cont& cont) {
 			if (cont.empty()) {
 				std::cout << "Shape list is empty\n";
@@ -58,13 +70,13 @@ namespace menuMethods {
 
 		Vertex getVertex(std::string prompt) {
 			Vertex vtx;
-			while (true) {
 			vtx_input:
+			while (true) {
 				std::cout << prompt << ": ";
 				try {
 					std::cin >> vtx;
 				} catch (std::exception&) {
-					Menu::_Print_error("Input error!");
+					Menu::_Print_error("Vertex input error");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 					goto vtx_input;
 				}
@@ -74,14 +86,7 @@ namespace menuMethods {
 	}
 
 	void addRectangle(_Menu_shape_cont& cont) {
-		std::string name;
-		while (1) {
-			name = cin_aux::getName("Enter name");
-			if (std::find_if(cont.cbegin(), cont.cend(),
-							 [&cont, &name](auto& el) { return el->name == name; }) != cont.cend())
-				Menu::_Print_error("This name already exists");
-			else break;
-		}
+		std::string name = cin_aux::getNameWithFindCheck(cont);
 
 		//std::cout << "Enter left bottom vertex (x & y): ";
 		//Vertex vtx; std::cin >> vtx;
@@ -94,14 +99,7 @@ namespace menuMethods {
 	}
 
 	void addSquare(_Menu_shape_cont& cont) {
-		std::string name;
-		while (1) {
-			name = cin_aux::getName("Enter name");
-			if (std::find_if(cont.cbegin(), cont.cend(),
-							 [&cont, &name](auto& el) { return el->name == name; }) != cont.cend())
-				Menu::_Print_error("This name already exists");
-			else break;
-		}
+		std::string name = cin_aux::getNameWithFindCheck(cont);
 
 		Vertex vtx = cin_aux::getVertex("Enter left bottom vertex (x & y)");
 		//std::cout << "Enter left bottom vertex (x & y): ";
@@ -127,6 +125,16 @@ namespace menuMethods {
 		}
 		for (int i = 1; i <= cont.size(); ++i)
 			std::cout << i << ". " << cont[i - 1]->name << std::endl;
+	}
+
+	void printMaxSquare(_Menu_shape_cont& cont) {
+		if (cont.empty()) {
+			std::cout << "Create at least one shape, please\n";
+			return;
+		}
+
+		std::cout << "\nMax square: " << std::max_element(cont.begin(), cont.end(),
+				[](auto& p1, auto& p2) { return p1->square() < p2->square(); })->get()->square();
 	}
 
 	void saveToTxt(_Menu_shape_cont& cont) {
@@ -214,7 +222,7 @@ namespace menuMethods {
 	void clear(_Menu_shape_cont& cont) {
 		std::cout << "Do you really want to clear all shapes? [y/n]: ";
 		if (std::cin.get() == 'y') {
-			cont.erase(cont.begin(), cont.end());
+			cont.clear();
 			std::cout << "Successfully cleaned\n";
 		}
 	}

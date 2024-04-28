@@ -14,10 +14,11 @@
 
 namespace menuMethods {
 	namespace cin_aux {
-		_Vertex_t getUnsigned(std::string prompt);
-		std::string getName(std::string prompt);
-		int getIndex(_Menu_shape_cont& cont);
-		Vertex getVertex(std::string prompt);
+		inline _Vertex_t getUnsigned(std::string prompt);
+		inline std::string getName(std::string prompt);
+		inline std::string getNameWithFindCheck(_Menu_shape_cont& cont);
+		inline int getIndex(_Menu_shape_cont& cont);
+		inline Vertex getVertex(std::string prompt);
 	}
 
 	// creating
@@ -27,6 +28,7 @@ namespace menuMethods {
 	// printing
 	void printShapes(_Menu_shape_cont& cont);
 	void printNames(_Menu_shape_cont& cont);
+	void printMaxSquare(_Menu_shape_cont& cont);
 
 	// file
 	void saveToTxt(_Menu_shape_cont& cont);

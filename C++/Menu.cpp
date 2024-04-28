@@ -4,8 +4,7 @@ Menu* Menu::current = nullptr;
 void Menu::showMenu() {
 	current = this;
 	std::cout << CSI"91m" << CSI << _Menu_right_border / 2 - this->desc.size() / 2 + 1 << "G" <<
-		this->desc <<
-		CSI"0m" << std::endl;
+		this->desc << CSI"0m" << std::endl;
 
 	print_border();
 
@@ -19,7 +18,7 @@ void Menu::showMenu() {
 	print_border(true);
 }
 
-void Menu::add(char key, std::string desc, _Menu_func func) {
+void Menu::add(char key, std::string desc, _Menu_fptr func) {
 	if (key == _Menu_exit or key == _Menu_back or items.contains(key))
 		throw std::exception(std::format("`{}` char for menu item already used", key).c_str());
 	items[key].emplace<0>(desc, func); // emplace as 0 - MenuItem
@@ -33,24 +32,17 @@ void Menu::add(char key, Menu& menu) {
 }
 
 void Menu::cin_loop(_Menu_shape_cont& cont) {
+	char ch;
 	while (1) {
 		std::cout << "Select item: " << CSI"93m";
 		while (std::cin.peek() == '\n') {
 			std::cin.ignore();
 		}
-		char ch = std::cin.get();
+		std::cin.get(ch);
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		std::cout << CSI"0m";
 
-		if (ch == _Menu_exit) {
-			std::cout << CSI"92m" << "Exit" << CSI"0m" << std::endl;
-			break;
-		}
-		else if (ch == _Menu_back and current->parent != nullptr) {
-			std::cout << CSI"92m" << "Back" << CSI"0m" << std::endl;
-			current->parent->showMenu();
-		}
-		else if (current->items.contains(ch)) {
+		if (current->items.contains(ch)) {
 			if (auto* ptr = std::get_if<0>(&current->items[ch])) { // if ptr != nullptr and items is MenuItem
 				std::cout << CSI"92m" << ptr->desc << CSI"0m" << std::endl;
 				(ptr->action)(cont);
@@ -58,6 +50,14 @@ void Menu::cin_loop(_Menu_shape_cont& cont) {
 				current->showMenu();
 			}
 			else std::get<1>(current->items[ch]).showMenu(); // otherwise it's Menu object
+		}
+		else if (ch == _Menu_back and current->parent != nullptr) {
+			std::cout << CSI"92m" << "Back" << CSI"0m" << std::endl;
+			current->parent->showMenu();
+		}
+		else if (ch == _Menu_exit) {
+			std::cout << CSI"92m" << "Exit" << CSI"0m" << std::endl;
+			break;
 		}
 		else Menu::_Print_error("Input error");
 	}
@@ -68,7 +68,6 @@ void Menu::_Print_error(std::string msg) {
 }
 
 void Menu::print_item(const char key, const std::string& desc) {
-	//std::cout << CSI"G";
 	std::cout << CSI"93m" << key << CSI"0m" << " -> " << CSI"92m" << desc; // print menu item
 	std::cout << CSI << _Menu_right_border << "G" << CSI"96m" << ESC"(0" << 'x' << ESC"(B"; // print border char
 	std::cout << '\r' << std::endl;

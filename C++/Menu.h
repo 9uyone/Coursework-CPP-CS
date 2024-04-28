@@ -4,26 +4,24 @@
 #include <limits>
 #include <format>
 #include <variant>
-#include <vector>
 #include "simpleVector.h"
 #include "Shape.h"
 
 #define ESC "\x1b"
 #define CSI "\x1b["
 
-const char _Menu_back = '-';
-const char _Menu_exit = '0';
-const uint16_t _Menu_right_border = 33;
+constexpr const char _Menu_back = '-';
+constexpr const char _Menu_exit = '0';
+constexpr const uint16_t _Menu_right_border = 33;
 
-//using _Menu_shape_cont = std::vector<std::shared_ptr<Shape>>;
 using _Menu_shape_cont = simpleVector<std::shared_ptr<Shape>>;
-using _Menu_func = void(*)(_Menu_shape_cont&);
+using _Menu_fptr = void(*)(_Menu_shape_cont&);
 
 struct MenuItem {
 	std::string desc;
-	_Menu_func action;
+	_Menu_fptr action;
 
-	MenuItem(std::string& d, _Menu_func& f) :
+	MenuItem(std::string& d, _Menu_fptr& f) :
 		desc(d),
 		action(std::move(f)) {}
 
@@ -44,7 +42,7 @@ public:
 
 	void showMenu();
 
-	void add(char key, std::string desc, _Menu_func func);
+	void add(char key, std::string desc, _Menu_fptr func);
 	void add(char key, Menu& menu);
 
 	void cin_loop(_Menu_shape_cont& cont);

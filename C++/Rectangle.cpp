@@ -20,10 +20,7 @@ Rectangle::Rectangle(std::string name, Vertex vtx, _Vertex_t s1, _Vertex_t s2) :
 }
 
 void Rectangle::checkAndSet() {
-	if (((*this)[2] - (*this)[0]).abs() != ((*this)[3] - (*this)[1]).abs() )/*
-		|| (((*this)[0] < (*this)[3]) != ((*this)[1] < (*this)[2]))
-		|| (((*this)[0] < (*this)[1]) != ((*this)[3] < (*this)[2]))
-		)*/
+	if (((*this)[2] - (*this)[0]).abs() != ((*this)[3] - (*this)[1]).abs())
 		throw std::invalid_argument("{}: The given points don't form a rectangle");
 
 	//if (!isClockwise())

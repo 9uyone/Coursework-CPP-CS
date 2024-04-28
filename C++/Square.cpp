@@ -17,10 +17,7 @@ Square::Square(std::string name, Vertex vtx, _Vertex_t side) :
 }
 
 void Square::checkAndSet() {
-	if ((*this)[1] - (*this)[0] != (*this)[2] - (*this)[3] ) /*
-		|| (((*this)[0] < (*this)[3]) != ((*this)[1] < (*this)[2]))
-		|| (((*this)[0] < (*this)[1]) != ((*this)[3] < (*this)[2]))
-		)*/
+	if ((*this)[1] - (*this)[0] != (*this)[2] - (*this)[3])
 		throw std::invalid_argument(std::format("{}: The given points don't form a square", name));
 	side = ((*this)[1] - (*this)[0]).hypot();
 }
