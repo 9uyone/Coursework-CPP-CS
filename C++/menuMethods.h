@@ -21,11 +21,11 @@ namespace menuMethods {
 		inline Vertex getVertex(std::string prompt);
 	}
 
-	// creating
+	// create
 	void addRectangle(_Menu_shape_cont& cont);
 	void addSquare(_Menu_shape_cont& cont);
 
-	// printing
+	// print
 	void printShapes(_Menu_shape_cont& cont);
 	void printNames(_Menu_shape_cont& cont);
 	void printMaxSquare(_Menu_shape_cont& cont);
@@ -35,7 +35,7 @@ namespace menuMethods {
 	void saveToJson(_Menu_shape_cont& cont);
 	void fromJson(_Menu_shape_cont& cont);
 
-	// changing
+	// change
 	void move(_Menu_shape_cont& cont);
 	void remove(_Menu_shape_cont& cont);
 	void clear(_Menu_shape_cont& cont);

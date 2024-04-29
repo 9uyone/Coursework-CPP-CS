@@ -3,7 +3,7 @@
 
 class Rectangle : public Shape {
 private:
-	_Vertex_t side_1, side_2;
+	_Vertex_t side_w, side_h;
 
 public: // ctors & dtor
 	Rectangle(std::string name, std::initializer_list<Vertex> ilist);
@@ -13,7 +13,7 @@ public: // ctors & dtor
 		checkAndSet();
 	}
 
-	Rectangle(std::string name, Vertex side_bottom_vtx, _Vertex_t s1, _Vertex_t s2);
+	Rectangle(std::string name, Vertex side_bottom_vtx, _Vertex_t sW, _Vertex_t sH);
 
 	Rectangle(Rectangle& other);
 	Rectangle(Rectangle&& other) noexcept;
@@ -26,8 +26,7 @@ public: // ctors & dtor
 private:
 	void checkAndSet();
 
-	// overriden methods
-public:
+public: // overriden methods
 	double square() override;
 	nlohmann::json makeJson() override;
 	void showInfo(std::ostream& os = std::cout) override;

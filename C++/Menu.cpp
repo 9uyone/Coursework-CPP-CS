@@ -18,7 +18,7 @@ void Menu::showMenu() {
 	print_border(true);
 }
 
-void Menu::add(char key, std::string desc, _Menu_fptr func) {
+void Menu::add(char key, std::string desc, _Menu_fptr_t func) {
 	if (key == _Menu_exit or key == _Menu_back or items.contains(key))
 		throw std::exception(std::format("`{}` char for menu item already used", key).c_str());
 	items[key].emplace<0>(desc, func); // emplace as 0 - MenuItem

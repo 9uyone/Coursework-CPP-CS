@@ -1,5 +1,5 @@
 #pragma once
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <limits>
 #include <format>
@@ -12,16 +12,16 @@
 
 constexpr const char _Menu_back = '-';
 constexpr const char _Menu_exit = '0';
-constexpr const uint16_t _Menu_right_border = 33;
+constexpr const uint16_t _Menu_right_border = 30;
 
 using _Menu_shape_cont = simpleVector<std::shared_ptr<Shape>>;
-using _Menu_fptr = void(*)(_Menu_shape_cont&);
+using _Menu_fptr_t = void(*)(_Menu_shape_cont&);
 
 struct MenuItem {
 	std::string desc;
-	_Menu_fptr action;
+	_Menu_fptr_t action;
 
-	MenuItem(std::string& d, _Menu_fptr& f) :
+	MenuItem(std::string& d, _Menu_fptr_t& f) :
 		desc(d),
 		action(std::move(f)) {}
 
@@ -32,7 +32,7 @@ class Menu {
 private:
 	Menu* parent = nullptr;
 	static Menu* current;
-	std::unordered_map<char, std::variant<MenuItem, Menu>> items;
+	std::map<char, std::variant<MenuItem, Menu>> items;
 
 public:
 	std::string desc;
@@ -42,7 +42,7 @@ public:
 
 	void showMenu();
 
-	void add(char key, std::string desc, _Menu_fptr func);
+	void add(char key, std::string desc, _Menu_fptr_t func);
 	void add(char key, Menu& menu);
 
 	void cin_loop(_Menu_shape_cont& cont);

@@ -19,6 +19,7 @@ Square::Square(std::string name, Vertex vtx, _Vertex_t side) :
 void Square::checkAndSet() {
 	if ((*this)[1] - (*this)[0] != (*this)[2] - (*this)[3])
 		throw std::invalid_argument(std::format("{}: The given points don't form a square", name));
+
 	side = ((*this)[1] - (*this)[0]).hypot();
 }
 
@@ -45,7 +46,6 @@ Square& Square::operator=(Square&& other) noexcept {
 }
 
 double Square::square() {
-	//return std::pow((vertices[1] - vertices[0]).get_y(), 2);
 	return pow(side, 2);
 }
 
@@ -53,8 +53,8 @@ nlohmann::json Square::makeJson() {
 	nlohmann::json json;
 	json["type"] = "Square";
 	json["name"] = name;
-	json["side"] = side;
-	json["square"] = square();
+	/*json["side"] = side;
+	json["square"] = square();*/
 	for (auto& vtx : *this) {
 		json["vertices"].push_back({ { "x", vtx.get_x() }, { "y", vtx.get_y() } });
 	}
@@ -63,11 +63,11 @@ nlohmann::json Square::makeJson() {
 }
 
 void Square::showInfo(std::ostream& os) {
-	os << "SQUARE " << name << std::endl <<
+	os << "Name: " << name << std::endl <<
+		"Type: " << "Square" << std::endl <<
 		"Square: " << this->square() << std::endl <<
-		//"Left bottom vertex: " << vtx_ << std::endl <<
-		"Side length: " << side << std::endl <<
 		"Vertices:" << std::endl;
 	for (auto& vtx : *this)
 		os << "\x1b[4G" << vtx << std::endl;
+	os << "Side length: " << side << std::endl;
 }

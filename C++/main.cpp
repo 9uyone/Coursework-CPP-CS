@@ -49,11 +49,9 @@ int main() {
 		file.add('l', "Load from json", mm::fromJson);
 		menu.add('f', file);
 
-		Menu print("Print");
-		print.add('p', "Print shape info", mm::printShapes);
-		print.add('n', "Print shape names", mm::printNames);
-		print.add('s', "Print max square", mm::printMaxSquare);
-		menu.add('p', print);
+		menu.add('i', "Print shape info", mm::printShapes);
+		menu.add('n', "Print shape names", mm::printNames);
+		menu.add('m', "Max square", mm::printMaxSquare);
 
 		menu.showMenu();
 		menu.cin_loop(shapes);

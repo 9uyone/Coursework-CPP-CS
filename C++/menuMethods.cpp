@@ -91,10 +91,10 @@ namespace menuMethods {
 		//std::cout << "Enter left bottom vertex (x & y): ";
 		//Vertex vtx; std::cin >> vtx;
 		Vertex vtx = cin_aux::getVertex("Enter left bottom vertex (x & y)");
-		_Vertex_t side_1 = cin_aux::getUnsigned("Enter 1st side");
-		_Vertex_t side_2 = cin_aux::getUnsigned("Enter 2nd side");
+		_Vertex_t side_w = cin_aux::getUnsigned("Enter side_w");
+		_Vertex_t side_h = cin_aux::getUnsigned("Enter side_h");
 		
-		Rectangle obj(name, vtx, side_1, side_2);
+		Rectangle obj(name, vtx, side_w, side_h);
 		cont.push_back(std::make_shared<Rectangle>(std::move(obj)));
 	}
 
