@@ -3,7 +3,6 @@
 #include "Menu.h"
 #include <algorithm>
 #include "simpleVector.h"
-#include <vector>
 
 using namespace std;
 namespace mm = menuMethods;
@@ -44,12 +43,12 @@ int main() {
 		menu.add('e', edit);
 
 		Menu file("File");
-		file.add('t', "Save to txt", mm::saveToTxt);
-		file.add('j', "Save to json", mm::saveToJson);
+		file.add('t', "Save as txt", mm::saveAsTxt);
+		file.add('j', "Save as json", mm::saveAsJson);
 		file.add('l', "Load from json", mm::fromJson);
 		menu.add('f', file);
 
-		menu.add('i', "Print shape info", mm::printShapes);
+		menu.add('i', "Print shape info", mm::printShapeInfo);
 		menu.add('n', "Print shape names", mm::printNames);
 		menu.add('m', "Max square", mm::printMaxSquare);
 

@@ -77,7 +77,7 @@ void Rectangle::showInfo(std::ostream& os) {
 		"Square: " << square() << std::endl <<
 		"Vertices:" << std::endl;
 	for (auto& vtx : *this)
-		os << "\x1b[4G" << vtx << std::endl;
-	os << "Side_w length: " << side_w << std::endl <<
-		"Side h length: " << side_h << std::endl;
+		os << "\t" << vtx << std::endl;
+	os << "Side_w: " << side_w << std::endl <<
+		"Side h: " << side_h << std::endl;
 }

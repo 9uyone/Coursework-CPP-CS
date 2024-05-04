@@ -41,13 +41,11 @@ private:
 
 public: // methods
 	virtual void move(_Vertex_t deltaX, _Vertex_t deltaY);
-
 	virtual double square() = 0;
 
+	virtual nlohmann::json makeJson() = 0;
 	virtual void showInfo(std::ostream& os = std::cout) = 0;
 	friend std::ostream& operator<< (std::ostream& os, Shape& shp);
-
-	virtual nlohmann::json makeJson() = 0;
 
 private: // begin & end
 protected:

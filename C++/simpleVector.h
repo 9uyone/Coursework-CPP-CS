@@ -45,7 +45,7 @@ public: // modifiers
 	void push_back(const T& val);
 	void pop_back();
 	void insert(iterator pos, const T& value);
-	void append(iterator first, iterator last);
+	void append_range(iterator first, iterator last);
 	void erase(iterator it);
 	void erase(iterator first, iterator last);
 	void clear();
@@ -126,7 +126,7 @@ inline void simpleVector<T>::insert(iterator pos, const T& value) {
 }
 
 template<typename T>
-inline void simpleVector<T>::append(iterator first, iterator last) {
+inline void simpleVector<T>::append_range(iterator first, iterator last) {
 	std::copy(first, last, std::back_inserter(*this));
 }
 

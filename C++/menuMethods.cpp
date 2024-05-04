@@ -47,6 +47,37 @@ namespace menuMethods {
 			}
 		}
 
+		std::string getFileName(std::string prompt, std::string fileext) {
+			std::string fname;
+			while (1) {
+				std::cout << prompt << ": ";
+				std::cin >> fname;
+
+				if (std::cin.fail()) {
+					std::cin.clear();
+					Menu::_Print_error("Filename error");
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					continue;
+				} else {
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					if (fname[0] == '"')
+						fname.erase(fname.begin());
+					if (fname[fname.size() - 1] == '"')
+						fname.erase(fname.begin() + fname.size() - 1);
+
+					int pos = 0;
+					while ((pos = fname.find('\\', pos)) != std::string::npos) {
+						fname.replace(pos, 1, "\\\\");
+						pos += 2;
+					}
+
+					if (!fname.ends_with(fileext))
+						fname += fileext;
+					return fname;
+				}
+			}
+		}
+
 		int getIndex(_Menu_shape_cont& cont) {
 			if (cont.empty()) {
 				std::cout << "Shape list is empty\n";
@@ -56,7 +87,6 @@ namespace menuMethods {
 			while (1) {
 				std::cout << "Select name index: ";
 				std::cin >> index;
-				//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				if (std::cin.fail() or !(index >= 1 && index <= cont.size())) {
 					std::cin.clear();
 					Menu::_Print_error("Incorrect index");
@@ -87,9 +117,6 @@ namespace menuMethods {
 
 	void addRectangle(_Menu_shape_cont& cont) {
 		std::string name = cin_aux::getNameWithFindCheck(cont);
-
-		//std::cout << "Enter left bottom vertex (x & y): ";
-		//Vertex vtx; std::cin >> vtx;
 		Vertex vtx = cin_aux::getVertex("Enter left bottom vertex (x & y)");
 		_Vertex_t side_w = cin_aux::getUnsigned("Enter side_w");
 		_Vertex_t side_h = cin_aux::getUnsigned("Enter side_h");
@@ -100,20 +127,20 @@ namespace menuMethods {
 
 	void addSquare(_Menu_shape_cont& cont) {
 		std::string name = cin_aux::getNameWithFindCheck(cont);
-
 		Vertex vtx = cin_aux::getVertex("Enter left bottom vertex (x & y)");
-		//std::cout << "Enter left bottom vertex (x & y): ";
-		//std::cin >> vtx;
 		_Vertex_t side = cin_aux::getUnsigned("Enter side");
 		Square obj(name, vtx, side);
 		cont.push_back(std::make_shared<Square>(std::move(obj)));
 	}
 
-	void printShapes(_Menu_shape_cont& cont) {
+	void printShapeInfo(_Menu_shape_cont& cont) {
 		if (cont.empty()) {
 			std::cout << "Nothing to print\n";
 			return;
 		}
+
+		_OutputMaxSquare(std::cout, cont);
+		std::cout << std::endl;
 		for (auto& obj : cont)
 			std::cout << *obj << std::endl;
 	}
@@ -127,54 +154,71 @@ namespace menuMethods {
 			std::cout << i << ". " << cont[i - 1]->name << std::endl;
 	}
 
+	inline void _OutputMaxSquare(std::ostream& os, _Menu_shape_cont& cont) {
+		auto shp = _GetMaxSquareShape(cont);
+		os << "Max square: " << shp->square() << " (" << shp->name << ')' << "\n";
+	}
+
+	std::shared_ptr<Shape> _GetMaxSquareShape(_Menu_shape_cont& cont) {
+		return *std::max_element(cont.begin(), cont.end(),
+				[](auto& p1, auto& p2) { return p1->square() < p2->square(); });
+	}
+
 	void printMaxSquare(_Menu_shape_cont& cont) {
 		if (cont.empty()) {
 			std::cout << "Create at least one shape, please\n";
 			return;
 		}
-
-		std::cout << "\nMax square: " << std::max_element(cont.begin(), cont.end(),
-				[](auto& p1, auto& p2) { return p1->square() < p2->square(); })->get()->square();
+		_OutputMaxSquare(std::cout, cont);
 	}
 
-	void saveToTxt(_Menu_shape_cont& cont) {
+	void saveAsTxt(_Menu_shape_cont& cont) {
 		if (cont.empty()) {
 			std::cout << "Nothing to save\n";
 			return;
 		}
 		
-		std::string name = cin_aux::getName("Enter file name (without .txt)") + ".txt";
+		std::string name = cin_aux::getFileName("Enter path / file name", ".txt");
 		std::ofstream file(name);
 		if (!file)
 			throw std::exception(std::format("Cannot open {} for writing", name).c_str());
-		
+
+		_OutputMaxSquare(file, cont);
+		file << std::endl;
+
 		for (auto& obj : cont)
 			file << *obj << std::endl;
 		file.close();
 	}
 
-	void saveToJson(_Menu_shape_cont& cont) {
+	void saveAsJson(_Menu_shape_cont& cont) {
 		if (cont.empty()) {
 			std::cout << "Nothing to save\n";
 			return;
 		}
 		
-		std::string name = cin_aux::getName("Enter file name (w/o .json)") + ".json";
+		std::string name = cin_aux::getFileName("Enter path / file name", ".json");
 		std::ofstream file(name);
 		if (!file)
 			throw std::exception(std::format("Cannot open {} for writing", name).c_str());
 
 		nlohmann::json json;
-		json["count"] = cont.size();
-		for (auto& obj : cont) {
+		nlohmann::json& j_info = json["info"];
+
+		j_info["count"] = cont.size();
+		nlohmann::json& j_max_sq = j_info["max_square"];
+		auto max_sq_shp = _GetMaxSquareShape(cont);
+		j_max_sq["square"] = max_sq_shp->square();
+		j_max_sq["shape_name"] = max_sq_shp->name;
+
+		for (auto& obj : cont)
 			json["shapes"].push_back(std::move(obj->makeJson()));
-		}
 		file << json.dump(4) << std::endl;
 		file.close();
 	}
 
 	void fromJson(_Menu_shape_cont& cont) {
-		std::string name = cin_aux::getName("Enter file name (without .json)") + ".json";
+		std::string name = cin_aux::getFileName("Enter path / file name", ".json");
 		std::ifstream file(name);
 		if (!file)
 			throw std::exception(std::format("Cannot open {} for reading", name).c_str());

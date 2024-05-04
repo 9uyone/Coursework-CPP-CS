@@ -68,6 +68,6 @@ void Square::showInfo(std::ostream& os) {
 		"Square: " << this->square() << std::endl <<
 		"Vertices:" << std::endl;
 	for (auto& vtx : *this)
-		os << "\x1b[4G" << vtx << std::endl;
-	os << "Side length: " << side << std::endl;
+		os << "\t" << vtx << std::endl;
+	os << "Side: " << side << std::endl;
 }

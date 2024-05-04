@@ -15,6 +15,7 @@ constexpr const char _Menu_exit = '0';
 constexpr const uint16_t _Menu_right_border = 30;
 
 using _Menu_shape_cont = simpleVector<std::shared_ptr<Shape>>;
+//using _Menu_shape_cont = std::vector<std::shared_ptr<Shape>>;
 using _Menu_fptr_t = void(*)(_Menu_shape_cont&);
 
 struct MenuItem {
