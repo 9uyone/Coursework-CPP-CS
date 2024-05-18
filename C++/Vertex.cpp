@@ -49,8 +49,7 @@ Vertex Vertex::operator*(Vertex other) const {
 	return { x_ * other.x_, y_ * other.y_ };
 }
 Vertex Vertex::operator/(Vertex other) const {
-	if (std::fpclassify((double)other.x_) == FP_ZERO
-		or std::fpclassify((double)other.y_) == FP_ZERO)
+	if ((double)other.x_ == 0.0 || (double)other.y_ == 0.0)
 		throw std::exception("Division by zero");
 	return { x_ / other.x_, y_ / other.y_ };
 }

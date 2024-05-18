@@ -1,21 +1,24 @@
 #include "Menu.h"
 Menu* Menu::current = nullptr;
 
-void Menu::showMenu() {
+void Menu::show() {
 	current = this;
 	std::cout << CSI"91m" << CSI << _Menu_right_border / 2 - this->desc.size() / 2 + 1 << "G" <<
 		this->desc << CSI"0m" << std::endl;
 
-	print_border();
+	printBorder();
 
-	for (auto& item : this->items)
-		print_item(item.first, std::visit([](auto&& args) { return args.desc; }, item.second));
+	for (auto& item : this->items) {
+		if (auto* ptr = std::get_if<MenuItem>(&item.second)) // if it's MenuItem, in map value
+			printItem(item.first, ptr->first); // get first el (desc)
+		else printItem(item.first, std::get<Menu>(item.second).desc); // else it's Menu, get desc field
+	}
 
 	if (this->parent != nullptr)
-		print_item(_Menu_back, "Back");
-	print_item(_Menu_exit, "Exit");
+		printItem(_Menu_back, "Back");
+	printItem(_Menu_exit, "Exit");
 
-	print_border(true);
+	printBorder(true);
 }
 
 void Menu::add(char key, std::string desc, _Menu_fptr_t func) {
@@ -31,49 +34,56 @@ void Menu::add(char key, Menu& menu) {
 	items[key] = menu;
 }
 
-void Menu::cin_loop(_Menu_shape_cont& cont) {
+void Menu::run(_Menu_shape_cont& cont) {
 	char ch;
 	while (1) {
 		std::cout << "Select item: " << CSI"93m";
 		while (std::cin.peek() == '\n') {
 			std::cin.ignore();
+			std::cout << CSI"0m" << "Select item: " << CSI"93m";
 		}
 		std::cin.get(ch);
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		std::cout << CSI"0m";
 
 		if (current->items.contains(ch)) {
-			if (auto* ptr = std::get_if<0>(&current->items[ch])) { // if ptr != nullptr and items is MenuItem
-				std::cout << CSI"92m" << ptr->desc << CSI"0m" << std::endl;
-				(ptr->action)(cont);
+			if (auto* ptr = std::get_if<0>(&current->items[ch])) { // if items is MenuItem, and ptr != nullptr
+				std::cout << CSI"92m" << ptr->first << CSI"0m" << std::endl;
+				ptr->second(cont);
 				std::cout << std::endl;
-				current->showMenu();
+				current->show();
 			}
-			else std::get<1>(current->items[ch]).showMenu(); // otherwise it's Menu object
+			else std::get<1>(current->items[ch]).show(); // otherwise it's Menu object
 		}
 		else if (ch == _Menu_back and current->parent != nullptr) {
 			std::cout << CSI"92m" << "Back" << CSI"0m" << std::endl;
-			current->parent->showMenu();
+			current->parent->show();
 		}
 		else if (ch == _Menu_exit) {
 			std::cout << CSI"92m" << "Exit" << CSI"0m" << std::endl;
 			break;
 		}
-		else Menu::_Print_error("Input error");
+		else Menu::_PrintError("Input error");
 	}
 }
 
-void Menu::_Print_error(std::string msg) {
+void Menu::_PrintError(std::string msg) {
 	std::cerr << CSI"31m" << CSI"A" << CSI"K" << msg << CSI"0m" << std::endl;
 }
 
-void Menu::print_item(const char key, const std::string& desc) {
+void Menu::_PrintSplitBorder() {
+	std::cout << CSI"36m";
+	for (int i = 0; i < _Menu_right_border; ++i, std::cout << ESC"(0" << 'q' << ESC"(B");
+	std::cout << CSI"0m" << "\n";
+}
+
+void Menu::printItem(const char key, const std::string& desc) {
 	std::cout << CSI"93m" << key << CSI"0m" << " -> " << CSI"92m" << desc; // print menu item
 	std::cout << CSI << _Menu_right_border << "G" << CSI"96m" << ESC"(0" << 'x' << ESC"(B"; // print border char
 	std::cout << '\r' << std::endl;
 }
 
-void Menu::print_border(bool drawBottom) {
+void Menu::printBorder(bool drawBottom) {
 	std::cout << ESC"(0" << CSI"96m" << (drawBottom ? 'm' : 'l'); // enter line drawing mode & set color
 	for (short i = 0; i < _Menu_right_border - 2; i++, std::cout << 'q');
 	std::cout << (drawBottom ? 'j' : 'k');

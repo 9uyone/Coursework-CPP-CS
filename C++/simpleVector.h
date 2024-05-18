@@ -3,18 +3,19 @@
 #include <stdexcept>
 #include <initializer_list>
 
-constexpr const float SV_CAP_INCR_COEF = 1.65;
-
 #pragma region header
 template<typename T>
 class simpleVector {
+public:
+	using value_type = T;
+	constexpr static const float CAP_GROW_RATE = 1.67;
+
+private: // fields
 	T* arr_{};
 	size_t size_;
 	size_t capacity_;
 
 public: //ctors and dtor
-	using value_type = T;
-
 	simpleVector(size_t initCapacity = 10);
 	simpleVector(std::initializer_list<T> ilist);
 	simpleVector(simpleVector<T>& other);
@@ -23,9 +24,8 @@ public: //ctors and dtor
 	~simpleVector() { delete[] arr_; }
 
 private: // iterator
-	template<typename Val_type>
+	template<typename Value_t>
 	class base_iterator;
-
 public:
 	using iterator = base_iterator<T>;
 	iterator begin() const { return iterator(arr_); }
@@ -55,7 +55,6 @@ public: // element access
 	T& operator[](size_t index);
 	T& front();
 	T& back();
-
 };
 #pragma endregion
 
@@ -67,7 +66,7 @@ inline simpleVector<T>::simpleVector(size_t initCapacity) : capacity_(initCapaci
 }
 
 template<typename T>
-inline simpleVector<T>::simpleVector(std::initializer_list<T> ilist) : capacity_(ilist.size()* SV_CAP_INCR_COEF), size_(ilist.size()) {
+inline simpleVector<T>::simpleVector(std::initializer_list<T> ilist) : capacity_(ilist.size()* CAP_GROW_RATE), size_(ilist.size()) {
 	arr_ = new T[capacity_]{};
 	std::copy(ilist.begin(), ilist.end(), arr_);
 }
@@ -75,14 +74,14 @@ inline simpleVector<T>::simpleVector(std::initializer_list<T> ilist) : capacity_
 template<typename T>
 inline simpleVector<T>::simpleVector(simpleVector<T>& other) {
 	clear();
-	reserve(other.capacity() * SV_CAP_INCR_COEF);
+	reserve(other.capacity() * CAP_GROW_RATE);
 	std::copy(other.begin(), other.end(), std::back_inserter(*this));
 }
 
 template<typename T>
 inline simpleVector<T>& simpleVector<T>::operator=(simpleVector<T>& other) {
 	clear();
-	reserve(other.capacity() * SV_CAP_INCR_COEF);
+	reserve(other.capacity() * CAP_GROW_RATE);
 	std::copy(other.begin(), other.end(), std::back_inserter(*this));
 	return *this;
 }
@@ -105,7 +104,7 @@ inline void simpleVector<T>::reserve(size_t newCapacity) {
 template<typename T>
 inline void simpleVector<T>::push_back(const T& val) {
 	if (size_ >= capacity_)
-		reserve(SV_CAP_INCR_COEF * size_);
+		reserve(CAP_GROW_RATE * size_);
 	arr_[size_++] = val;
 }
 
@@ -120,7 +119,7 @@ inline void simpleVector<T>::insert(iterator pos, const T& value) {
 	if (std::distance(begin(), pos) > size_)
 		throw std::out_of_range("Incorrect insertion position");
 	if (size_ >= capacity_)
-		reserve(SV_CAP_INCR_COEF * size_);
+		reserve(CAP_GROW_RATE * size_);
 
 	arr_[std::distance(begin(), pos)] = value;
 }
@@ -153,7 +152,7 @@ inline void simpleVector<T>::clear() {
 template<typename T>
 inline void simpleVector<T>::resize(size_t newsize) {
 	if (newsize > capacity_)
-		reserve(SV_CAP_INCR_COEF * newsize);
+		reserve(CAP_GROW_RATE * newsize);
 	size_ = newsize;
 }
 
@@ -181,14 +180,14 @@ inline T& simpleVector<T>::back() {
 
 // iterator impl
 template<typename T>
-template<typename Val_type>
+template<typename Value_t>
 class simpleVector<T>::base_iterator {
 public:
 	using iterator_category = std::random_access_iterator_tag;
 	using difference_type = std::ptrdiff_t;
-	using value_type = Val_type;
-	using pointer = Val_type*;
-	using reference = Val_type&;
+	using value_type = Value_t;
+	using pointer = Value_t*;
+	using reference = Value_t&;
 
 	base_iterator() = delete;
 	base_iterator(pointer ptr) : ptr(ptr) {}

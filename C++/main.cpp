@@ -1,31 +1,12 @@
 #include <iostream>
 #include "menuMethods.h"
 #include "Menu.h"
-#include <algorithm>
 #include "simpleVector.h"
 
 using namespace std;
 namespace mm = menuMethods;
 
 int main() {
-#define MAIN_MENU
-#ifndef MAIN_MENU
-	try {
-		simpleVector<int> sv = { -5, 6, -44, 72, 16 };
-		simpleVector<int> sv2 = { 10, 100, -72, 36 };
-
-		sv2.erase(sv2.begin() + 1);
-		sv2.resize(2);
-		sv2.insert(sv2.begin() + 1, 777);
-
-		for (auto el : sv)
-			cout << el << "\n";
-		cout << "\n";
-		for (auto el : sv2)
-			cout << el << "\n";
-	} catch (exception& ex) { cout << "EXCEPTION: " << ex.what() << endl; }
-
-#else // MAIN_MENU
 	_Menu_shape_cont shapes;
 
 	try {
@@ -51,14 +32,13 @@ int main() {
 		menu.add('i', "Print shape info", mm::printShapeInfo);
 		menu.add('n', "Print shape names", mm::printNames);
 		menu.add('m', "Max square", mm::printMaxSquare);
-
-		menu.showMenu();
-		menu.cin_loop(shapes);
+		
+		menu.show();
+		menu.run(shapes);
 	}
 	catch (exception& ex) {
-		Menu::_Print_error(std::format("EXCEPTION: {}", ex.what()));
+		Menu::_PrintError(std::format("EXCEPTION: {}", ex.what()));
 	}
 
-#endif // MAIN_MENU
 	return 0;
 }

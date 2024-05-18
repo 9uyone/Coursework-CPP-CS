@@ -13,7 +13,7 @@ public: // ctors & dtor
 		checkAndSet();
 	}
 
-	Rectangle(std::string name, Vertex side_bottom_vtx, _Vertex_t sW, _Vertex_t sH);
+	Rectangle(std::string name, Vertex lb_vtx, _Vertex_t sW, _Vertex_t sH);
 
 	Rectangle(Rectangle& other);
 	Rectangle(Rectangle&& other) noexcept;
@@ -27,6 +27,9 @@ private:
 	void checkAndSet();
 
 public: // overriden methods
+	_Vertex_t get_side_w() const;
+	_Vertex_t get_side_h() const;
+
 	double square() override;
 	nlohmann::json makeJson() override;
 	void showInfo(std::ostream& os = std::cout) override;

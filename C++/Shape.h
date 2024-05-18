@@ -7,11 +7,9 @@
 #include <nlohmann/json.hpp>
 #include <algorithm>
 
-using _Shape_vertices_cont = std::vector<Vertex>;
-
 class Shape {
 protected:
-	_Shape_vertices_cont vertices{};
+	std::vector<Vertex> vertices{};
 	Vertex& operator[](size_t index);
 
 public:
@@ -49,9 +47,9 @@ public: // methods
 
 private: // begin & end
 protected:
-	_Shape_vertices_cont::iterator begin();
-	_Shape_vertices_cont::iterator end();
+	std::vector<Vertex>::iterator begin();
+	std::vector<Vertex>::iterator end();
 public:
-	_Shape_vertices_cont::const_iterator cbegin();
-	_Shape_vertices_cont::const_iterator cend();
+	std::vector<Vertex>::const_iterator cbegin();
+	std::vector<Vertex>::const_iterator cend();
 };

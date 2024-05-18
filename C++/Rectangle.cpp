@@ -6,11 +6,11 @@ Rectangle::Rectangle(std::string name, std::initializer_list<Vertex> ilist) : Sh
 	checkAndSet();
 }
 
-Rectangle::Rectangle(std::string name, Vertex vtx, _Vertex_t sW, _Vertex_t sH) :
-	Shape(name, { vtx,
-		  {vtx.get_x(), vtx.get_y() + sH},
-		  {vtx.get_x() + sW, vtx.get_y() + sH},
-		  {vtx.get_x() + sW, vtx.get_y()}
+Rectangle::Rectangle(std::string name, Vertex lb_vtx, _Vertex_t sW, _Vertex_t sH) :
+	Shape(name, { lb_vtx,
+		  {lb_vtx.get_x(), lb_vtx.get_y() + sH},
+		  {lb_vtx.get_x() + sW, lb_vtx.get_y() + sH},
+		  {lb_vtx.get_x() + sW, lb_vtx.get_y()}
 		  }),
 	side_w(sW),
 	side_h(sH)
@@ -25,6 +25,14 @@ void Rectangle::checkAndSet() {
 
 	side_h = ((*this)[1] - (*this)[0]).hypot();
 	side_w = ((*this)[2] - (*this)[1]).hypot();
+}
+
+_Vertex_t Rectangle::get_side_w() const {
+	return side_w;
+}
+
+_Vertex_t Rectangle::get_side_h() const {
+	return side_h;
 }
 
 Rectangle::Rectangle(Rectangle& other) :
@@ -62,9 +70,6 @@ nlohmann::json Rectangle::makeJson() {
 	nlohmann::json json;
 	json["type"] = "Rectangle";
 	json["name"] = name;
-	/*json["side_h"] = side_h;
-	json["side_w"] = side_w;
-	json["square"] = square();*/
 	for (auto& vtx : *this)
 		json["vertices"].push_back({ { "x", vtx.get_x() }, { "y", vtx.get_y() } });
 
@@ -77,7 +82,7 @@ void Rectangle::showInfo(std::ostream& os) {
 		"Square: " << square() << std::endl <<
 		"Vertices:" << std::endl;
 	for (auto& vtx : *this)
-		os << "\t" << vtx << std::endl;
+		os << "  " << vtx << std::endl;
 	os << "Side_w: " << side_w << std::endl <<
 		"Side h: " << side_h << std::endl;
 }

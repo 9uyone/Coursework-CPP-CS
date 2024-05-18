@@ -10,7 +10,7 @@ namespace menuMethods {
 				std::cin >> n;
 				if (std::cin.fail() or n <= 0) {
 					std::cin.clear();
-					Menu::_Print_error("Value should be > 0");
+					Menu::_PrintError("Value should be > 0");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				} else {
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -23,13 +23,15 @@ namespace menuMethods {
 			std::string name;
 			while (1) {
 				std::cout << prompt << ": ";
-				std::cin >> name;
-				if (std::cin.fail() or !std::regex_match(name, std::regex("^[a-zA-Z]\\w*$"))) {
+				//std::cin >> name;
+				std::getline(std::cin, name);
+				//if (std::cin.fail() or !std::regex_match(name, std::regex("^\\S{1,20}$"))) {
+				if (std::cin.fail() or !std::regex_match(name, std::regex("^\\w{1,15}$"))) {
 					std::cin.clear();
-					Menu::_Print_error("Name must start with a letter and contain alphanumeric symbols");
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					Menu::_PrintError("No spaces are allowed, only English word letters; max length is 20");
+					//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				} else {
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 					return name;
 				}
 			}
@@ -42,7 +44,7 @@ namespace menuMethods {
 				if (std::find_if(cont.cbegin(), cont.cend(), [&cont, &name](auto& el) {
 					return el->name == name;
 				}) != cont.cend())
-					Menu::_Print_error("This name already exists");
+					Menu::_PrintError("This name already exists");
 				else return name;
 			}
 		}
@@ -55,7 +57,7 @@ namespace menuMethods {
 
 				if (std::cin.fail()) {
 					std::cin.clear();
-					Menu::_Print_error("Filename error");
+					Menu::_PrintError("Filename error");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 					continue;
 				} else {
@@ -89,7 +91,7 @@ namespace menuMethods {
 				std::cin >> index;
 				if (std::cin.fail() or !(index >= 1 && index <= cont.size())) {
 					std::cin.clear();
-					Menu::_Print_error("Incorrect index");
+					Menu::_PrintError("Incorrect index");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				} else {
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -106,12 +108,24 @@ namespace menuMethods {
 				try {
 					std::cin >> vtx;
 				} catch (std::exception&) {
-					Menu::_Print_error("Vertex input error");
+					Menu::_PrintError("Vertex input error");
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 					goto vtx_input;
 				}
 				return vtx;
 			}
+		}
+	}
+
+	namespace os_aux {
+		inline void outputMaxSquare(std::ostream& os, _Menu_shape_cont& cont) {
+			auto shp = getMaxSquareShape(cont);
+			os << "Max square: " << shp->square() << " (" << shp->name << ')' << "\n";
+		}
+
+		std::shared_ptr<Shape> getMaxSquareShape(_Menu_shape_cont& cont) {
+			return *std::max_element(cont.begin(), cont.end(),
+					[](auto& p1, auto& p2) { return p1->square() < p2->square(); });
 		}
 	}
 
@@ -139,10 +153,12 @@ namespace menuMethods {
 			return;
 		}
 
-		_OutputMaxSquare(std::cout, cont);
-		std::cout << std::endl;
-		for (auto& obj : cont)
-			std::cout << *obj << std::endl;
+		os_aux::outputMaxSquare(std::cout, cont);
+		Menu::_PrintSplitBorder();
+		for (auto& obj : cont) {
+			std::cout << *obj;
+			Menu::_PrintSplitBorder();
+		}
 	}
 
 	void printNames(_Menu_shape_cont& cont) {
@@ -154,22 +170,12 @@ namespace menuMethods {
 			std::cout << i << ". " << cont[i - 1]->name << std::endl;
 	}
 
-	inline void _OutputMaxSquare(std::ostream& os, _Menu_shape_cont& cont) {
-		auto shp = _GetMaxSquareShape(cont);
-		os << "Max square: " << shp->square() << " (" << shp->name << ')' << "\n";
-	}
-
-	std::shared_ptr<Shape> _GetMaxSquareShape(_Menu_shape_cont& cont) {
-		return *std::max_element(cont.begin(), cont.end(),
-				[](auto& p1, auto& p2) { return p1->square() < p2->square(); });
-	}
-
 	void printMaxSquare(_Menu_shape_cont& cont) {
 		if (cont.empty()) {
 			std::cout << "Create at least one shape, please\n";
 			return;
 		}
-		_OutputMaxSquare(std::cout, cont);
+		os_aux::outputMaxSquare(std::cout, cont);
 	}
 
 	void saveAsTxt(_Menu_shape_cont& cont) {
@@ -183,7 +189,7 @@ namespace menuMethods {
 		if (!file)
 			throw std::exception(std::format("Cannot open {} for writing", name).c_str());
 
-		_OutputMaxSquare(file, cont);
+		os_aux::outputMaxSquare(file, cont);
 		file << std::endl;
 
 		for (auto& obj : cont)
@@ -207,7 +213,7 @@ namespace menuMethods {
 
 		j_info["count"] = cont.size();
 		nlohmann::json& j_max_sq = j_info["max_square"];
-		auto max_sq_shp = _GetMaxSquareShape(cont);
+		auto max_sq_shp = os_aux::getMaxSquareShape(cont);
 		j_max_sq["square"] = max_sq_shp->square();
 		j_max_sq["shape_name"] = max_sq_shp->name;
 

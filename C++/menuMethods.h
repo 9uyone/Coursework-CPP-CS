@@ -14,12 +14,17 @@
 
 namespace menuMethods {
 	namespace cin_aux {
-		inline _Vertex_t getUnsigned(std::string prompt);
-		inline std::string getName(std::string prompt);
-		inline std::string getNameWithFindCheck(_Menu_shape_cont& cont);
-		inline std::string getFileName(std::string prompt, std::string fileext);
-		inline int getIndex(_Menu_shape_cont& cont);
-		inline Vertex getVertex(std::string prompt);
+		_Vertex_t getUnsigned(std::string prompt);
+		std::string getName(std::string prompt);
+		std::string getNameWithFindCheck(_Menu_shape_cont& cont);
+		std::string getFileName(std::string prompt, std::string fileext);
+		int getIndex(_Menu_shape_cont& cont);
+		Vertex getVertex(std::string prompt);
+	}
+
+	namespace os_aux {
+		void outputMaxSquare(std::ostream& os, _Menu_shape_cont& cont);
+		std::shared_ptr<Shape> getMaxSquareShape(_Menu_shape_cont& cont);
 	}
 
 	// create
@@ -30,10 +35,6 @@ namespace menuMethods {
 	void printShapeInfo(_Menu_shape_cont& cont);
 	void printNames(_Menu_shape_cont& cont);
 	void printMaxSquare(_Menu_shape_cont& cont);
-	// aux hidden
-	inline void _OutputMaxSquare(std::ostream& os, _Menu_shape_cont& cont);
-	inline std::shared_ptr<Shape> _GetMaxSquareShape(_Menu_shape_cont& cont);
-	
 
 	// file
 	void saveAsTxt(_Menu_shape_cont& cont);
