@@ -25,10 +25,9 @@ namespace menuMethods {
 				std::cout << prompt << ": ";
 				//std::cin >> name;
 				std::getline(std::cin, name);
-				//if (std::cin.fail() or !std::regex_match(name, std::regex("^\\S{1,20}$"))) {
 				if (std::cin.fail() or !std::regex_match(name, std::regex("^\\w{1,15}$"))) {
 					std::cin.clear();
-					Menu::_PrintError("No spaces are allowed, only English word letters; max length is 20");
+					Menu::_PrintError("No spaces are allowed, only English word letters; max length is 15");
 					//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				} else {
 					//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -275,5 +274,8 @@ namespace menuMethods {
 			cont.clear();
 			std::cout << "Successfully cleaned\n";
 		}
+	}
+	void test(_Menu_shape_cont& cont) {
+		std::cout << "Testing menu\n";
 	}
 }

@@ -11,7 +11,7 @@ int main() {
 
 	try {
 		Menu menu("Main menu");
-
+		
 		Menu create("Create");
 		create.add('r', "Rectangle", mm::addRectangle);
 		create.add('s', "Square", mm::addSquare);

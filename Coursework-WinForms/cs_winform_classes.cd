@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="FullSignature">
+  <Class Name="Coursework_WinForms.fm_info">
+    <Position X="9.25" Y="0.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>lAAIHAAAACAAAAAIAASAgAACCIAAAAAAAAQAAiAAgCQ=</HashCode>
+      <FileName>fm_info.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Coursework_WinForms.fm_main">
+    <Position X="0.5" Y="0.5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>BCAAgCQQADAJgEwABBCEAQoCQAEBgiAABAIEIAAKAQA=</HashCode>
+      <FileName>fm_main.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Coursework_WinForms.fm_move">
+    <Position X="9.25" Y="6.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>BAIAQAAAAGAKghAAAECJAAIKAAAAAgAAAAQAMAAABAQ=</HashCode>
+      <FileName>fm_move.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Coursework_WinForms.fm_new_shape">
+    <Position X="5" Y="0.5" Width="4" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Coursework_WinForms.fm_new_shape.shp">
+        <TypeIdentifier>
+          <NewMemberFileName>fm_new_shape.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ECQIWQCAACgICBAAgASBgYCCgAAAAkIBmAQAGCEAALE=</HashCode>
+      <FileName>fm_new_shape.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -10,10 +10,6 @@
 #define ESC "\x1b"
 #define CSI "\x1b["
 
-constexpr const uint16_t _Menu_right_border = 30;
-constexpr const char _Menu_back = 'b';
-constexpr const char _Menu_exit = 'e';
-
 using _Menu_shape_cont = simpleVector<std::shared_ptr<Shape>>;
 using _Menu_fptr_t = void(*)(_Menu_shape_cont&);
 using MenuItem = std::pair<std::string, _Menu_fptr_t>;
@@ -27,6 +23,11 @@ private:
 public:
 	std::string desc;
 
+	inline static uint16_t rightBorder = 30;
+	inline static char backChar = '-';
+	inline static char exitChar = '0';
+
+public: // methods
 	Menu(std::string& desc) : desc(desc) {}
 	Menu(std::string&& desc) : desc(std::move(desc)) {}
 
@@ -37,10 +38,10 @@ public:
 
 	void run(_Menu_shape_cont& cont);
 
-public: // static aux methods
+	// aux methods
 	static void _PrintError(std::string msg);
 	static void _PrintSplitBorder();
 private:
 	static void printItem(const char key, const std::string& desc);
-	static void printBorder(bool drawBottom = false);
+	void printBorder(bool drawBottom);
 };

@@ -364,9 +364,8 @@ MigrationBackup/
 FodyWeavers.xsd
 /diary.txt
 /C++/v.txt
-/C++/shapes.json
 *.json
-/Coursework-WinForms
 *.docx
+*.pdf
 *.txt
 /Методичні вказівки до курсового проектування з ООП.pdf
