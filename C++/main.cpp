@@ -38,6 +38,7 @@ int main() {
 	}
 	catch (exception& ex) {
 		Menu::_PrintError(std::format("EXCEPTION: {}", ex.what()));
+		system("pause");
 	}
 
 	return 0;

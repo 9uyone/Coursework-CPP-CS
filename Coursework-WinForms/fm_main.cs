@@ -85,7 +85,6 @@ namespace Coursework_WinForms {
 				}
 
 				Vertex min_vtx = cur_shp_.vertices.Min();
-				//e.Graphics.DrawRectangle(pen, cur_shp_.vertices[0].x + margin_x + penSize_hf, cur_shp_.vertices[0].y + margin_y + penSize_hf,
 				e.Graphics.DrawRectangle(pen, min_vtx.x + margin_x + penSize_hf, min_vtx.y + margin_y + penSize_hf,
 					width - margin_x - penSize_hf, height - margin_y - penSize_hf);
 			}
@@ -131,7 +130,7 @@ namespace Coursework_WinForms {
 
 		private void edit_mv_btn_Click(object sender, EventArgs e) {
 			if (shapeList.SelectedIndex == -1) {
-				MessageBox.Show("Виберіть фігуру зі списку");
+				MessageBox.Show("Please select a shape from list");
 				return;
 			}
 
@@ -219,9 +218,8 @@ namespace Coursework_WinForms {
 					glob.shapes.Add(name, shape);
 					UpdateShapeList();
 				}
-
-			} catch(Exception ex) {
-				MessageBox.Show(ex.Message, "Opening error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			} catch (Exception ex) {
+				MessageBox.Show(ex.InnerException.Message, "Opening error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 

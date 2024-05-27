@@ -21,7 +21,7 @@ public: //ctors and dtor
 	simpleVector(simpleVector<T>& other);
 	simpleVector<T>& operator=(simpleVector<T>& other);
 
-	~simpleVector() { delete[] arr_; }
+	virtual ~simpleVector() { delete[] arr_; }
 
 private: // iterator
 	template<typename Value_t>

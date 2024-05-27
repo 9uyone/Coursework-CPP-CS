@@ -50,16 +50,21 @@ namespace Coursework_WinForms {
 
 			Shape shape;
 			try {
-				var x = float.Parse(lb_vtxX_tb.Text);
-				var y = float.Parse(lb_vtxY_tb.Text);
-				var side = float.Parse(sideW_tb.Text);
+				if (!Program.checkFloat(lb_vtxX_tb.Text, lb_vtxY_tb.Text, sideW_tb.Text))
+					throw new Exception("Incorrectly filled numeric fields");
+
+				var x = float.Parse(lb_vtxX_tb.Text.Replace('.', ','));
+				var y = float.Parse(lb_vtxY_tb.Text.Replace('.', ','));
+				var side = float.Parse(sideW_tb.Text.Replace('.', ','));
 
 				switch (SHAPE_TYPE) {
 					case shp.SQUARE:
 						shape = new Square(name_tb.Text, new Vertex(x, y), side);
 						break;
 					case shp.RECTANGLE:
-						var side_h = float.Parse(sideH_tb.Text);
+						if (!Program.checkFloat(lb_vtxX_tb.Text, lb_vtxY_tb.Text, sideW_tb.Text))
+							throw new Exception("Incorrectly filled numeric fields");
+						var side_h = float.Parse(sideH_tb.Text.Replace('.', ','));
 						shape = new Rectangle(name_tb.Text, new Vertex(x, y), side, side_h);
 						break;
 					default: throw new NotImplementedException("Unknown shape");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Coursework_WinForms {
@@ -10,9 +11,14 @@ namespace Coursework_WinForms {
 	}
 
 	public static class Program {
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
+		public static bool checkFloat(params string[] args) {
+			foreach (string arg in args) {
+				if (!Regex.IsMatch(arg, "^\\d[\\d\\.,]*$"))
+					return false;
+			}
+			return true;
+		}
+
 		[STAThread]
 		static void Main() {
 			Application.EnableVisualStyles();

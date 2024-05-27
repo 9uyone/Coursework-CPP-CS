@@ -1,12 +1,5 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Coursework_WinForms {
@@ -20,11 +13,10 @@ namespace Coursework_WinForms {
 
 		private string cur_shape_name;
 		private float dx, dy;
-		bool canSave = false;
+		bool canSave = true;
 
 		private void onXYchange() {
-			//if (string.IsNullOrEmpty(vtxX_tb.Text) || string.IsNullOrEmpty(vtxY_tb.Text)
-			if (!float.TryParse(vtxX_tb.Text, out dx) || !float.TryParse(vtxY_tb.Text, out dy)) {
+			if (!Program.checkFloat(vtxX_tb.Text, vtxY_tb.Text) || !float.TryParse(vtxX_tb.Text.Replace('.', ','), out dx) || !float.TryParse(vtxY_tb.Text.Replace('.', ','), out dy)) {
 				canSave = false;
 				return;
 			}
@@ -37,11 +29,13 @@ namespace Coursework_WinForms {
 		}
 
 		private void save_btn_Click(object sender, EventArgs e) {
-			if (canSave)
+			if (canSave) {
 				glob.shapes[cur_shape_name].move(dx, dy);
-			else MessageBox.Show("Please fill x and y fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Close();
+				MessageBox.Show("The shape has been moved", "Move", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+			else MessageBox.Show("Empty or wrongly filled fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			glob.main.canvas.Invalidate();
-			Close();
 		}
 
 		private void vtxX_tb_TextChanged(object sender, EventArgs e) {
